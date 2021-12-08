@@ -1,0 +1,51 @@
+﻿  A_Star_Pathfinding.cpp
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\A Star\Project1\Project1\A_Star_Pathfinding.h(171,97): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\A Star\Project1\Project1\A_Star_Pathfinding.h(172,51): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\A Star\Project1\Project1\VectorPositions.h(68,10): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\A Star\Project1\Project1\VectorPositions.h(66): message : while compiling class template member function 'int Vector2<int>::DistanceBetween(const Vector2<int> &,const Vector2<int> &)'
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\A Star\Project1\Project1\A_Star_Pathfinding.h(102): message : see reference to function template instantiation 'int Vector2<int>::DistanceBetween(const Vector2<int> &,const Vector2<int> &)' being compiled
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\A Star\Project1\Project1\A_Star_Pathfinding.h(136): message : see reference to class template instantiation 'Vector2<int>' being compiled
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\A Star\Project1\Project1\VectorPositions.h(56,10): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\A Star\Project1\Project1\VectorPositions.h(54): message : while compiling class template member function 'int Vector2<int>::DistanceFrom(const Vector2<int> &)'
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\A Star\Project1\Project1\A_Star_Pathfinding.h(92): message : see reference to function template instantiation 'int Vector2<int>::DistanceFrom(const Vector2<int> &)' being compiled
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\A Star\Project1\Project1\VectorPositions.h(49,42): warning C4244: 'return': conversion from 'double' to 'int', possible loss of data
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\A Star\Project1\Project1\VectorPositions.h(49): message : while compiling class template member function 'int Vector2<int>::DistanceFrom(T,T)'
+          with
+          [
+              T=int
+          ]
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\A Star\Project1\Project1\A_Star_Pathfinding.h(86): message : see reference to function template instantiation 'int Vector2<int>::DistanceFrom(T,T)' being compiled
+          with
+          [
+              T=int
+          ]
+  Source.cpp
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\A Star\Project1\Project1\A_Star_Pathfinding.h(171,97): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\A Star\Project1\Project1\A_Star_Pathfinding.h(172,51): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\A Star\Project1\Project1\VectorPositions.h(68,10): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\A Star\Project1\Project1\VectorPositions.h(66): message : while compiling class template member function 'int Vector2<int>::DistanceBetween(const Vector2<int> &,const Vector2<int> &)'
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\A Star\Project1\Project1\A_Star_Pathfinding.h(102): message : see reference to function template instantiation 'int Vector2<int>::DistanceBetween(const Vector2<int> &,const Vector2<int> &)' being compiled
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\A Star\Project1\Project1\A_Star_Pathfinding.h(136): message : see reference to class template instantiation 'Vector2<int>' being compiled
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\A Star\Project1\Project1\VectorPositions.h(56,10): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\A Star\Project1\Project1\VectorPositions.h(54): message : while compiling class template member function 'int Vector2<int>::DistanceFrom(const Vector2<int> &)'
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\A Star\Project1\Project1\A_Star_Pathfinding.h(92): message : see reference to function template instantiation 'int Vector2<int>::DistanceFrom(const Vector2<int> &)' being compiled
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\A Star\Project1\Project1\VectorPositions.h(49,42): warning C4244: 'return': conversion from 'double' to 'int', possible loss of data
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\A Star\Project1\Project1\VectorPositions.h(49): message : while compiling class template member function 'int Vector2<int>::DistanceFrom(T,T)'
+          with
+          [
+              T=int
+          ]
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\A Star\Project1\Project1\A_Star_Pathfinding.h(86): message : see reference to function template instantiation 'int Vector2<int>::DistanceFrom(T,T)' being compiled
+          with
+          [
+              T=int
+          ]
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\A Star\Project1\Project1\A_Star_Pathfinding.h(303,52): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=int
+          ]
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\A Star\Project1\Project1\Source.cpp(16): message : see reference to function template instantiation 'void A_Star_Pathfinding_Undefined::FindPath<int>(Vector2<int>,Vector2<int>)' being compiled
+  VectorPositions.cpp
+  Generating Code...
+  Project1.vcxproj -> C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\A Star\Project1\Debug\Project1.exe
