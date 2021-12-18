@@ -118,7 +118,7 @@ void CompleteMapRead(NodeMap& nm) {
 }
 
 int main() {
-    A_Star_Pathfinding_Default path;
+    A_Star_Pathfinding_Defined_Segmented path;
     NodeMap nm;
     CompleteMapRead(nm);
     nm.LinkNeighbours();

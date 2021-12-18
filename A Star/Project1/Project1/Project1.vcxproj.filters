@@ -24,7 +24,10 @@
     <ClCompile Include="VectorPositions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NodeMap.cpp">
+    <ClCompile Include="Node.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PathfindingMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,7 +38,10 @@
     <ClInclude Include="VectorPositions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="NodeMap.h">
+    <ClInclude Include="Node.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PathfindingMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

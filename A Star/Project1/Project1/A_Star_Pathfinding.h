@@ -1,9 +1,9 @@
 //////////
-//////////A Star Pathfing files // Vector2.h required
+//////////A Star Pathfing files // PathfindingMap.h required
 //////////Written by Tanapat Somrid 
 /////////Starting 01/12/2021
-//////// Most Recent Update 17/12/2021
-//////// Most Recent change: Default Implementation completed
+//////// Most Recent Update 18/12/2021
+//////// Most Recent change: Changing structure of files and classes
 
 #pragma once
 
@@ -12,9 +12,7 @@
 
 #include <set>
 #include <queue>
-#include <vector>
-#include "NodeMap.h"
-#include "VectorPositions.h"
+#include "PathfindingMap.h"
 
 
 /// <summary>
@@ -112,19 +110,19 @@ public:
 	int iterations;//For Debug and checking
 };
 
-class A_Star_Pathfinding_Default {
+class A_Star_Pathfinding_Defined {
 public:
-	A_Star_Pathfinding_Default() {};
-	~A_Star_Pathfinding_Default() {
+	A_Star_Pathfinding_Defined() {};
+	~A_Star_Pathfinding_Defined() {
 	};
 	//std::set<Node*, PositionComparator> open; Used for Defined maps
 	std::priority_queue<Node*, std::vector<Node*>, ReverseComparator> toSearchSorted;
 	std::set<Node*, ReverseComparator> toSearch;
 	std::set<Node*> searched;
+	NodeMap* currentMap;//Contains Obstacle locations
 
 	Node* root;//Start node
 	Node* target;//End node
-	NodeMap* currentMap;//Contains Obstacle locations
 	int nodeSize;//Allows us to take into account of the size of the agent using this(Assuming position is the center of agent, agent will not go halfway inside a wall.)
 
 	/// <summary>
@@ -177,6 +175,101 @@ private:
 public:
 	void SetMap(NodeMap* nm) {
 		currentMap = nm;
+
+		nodeSize = nm->nodeSize;
+	}
+
+	/// <summary>
+/// For Debuggin purposes
+/// </summary>
+	void PrintPath() {
+
+		Node* current = target;
+		std::cout << " It " << iterations << "Times it took" << std::endl;
+
+		while (current->GetParent() != nullptr)
+		{
+			current = current->GetParent();
+			std::cout << current->position << std::endl;
+			std::cout << current->GetGCost() << std::endl;
+		}
+		std::cout << " It " << iterations << "Times it took" << std::endl;
+
+	};
+	void PrintNode(Node* n) {
+		std::cout << "GCost:" << n->GetGCost() << " | FCost:" << n->GetFCost() << " | Position:" << n->position << std::endl;
+	}
+	int iterations;//For Debug and checking
+};
+
+class A_Star_Pathfinding_Defined_Segmented {
+public:
+	A_Star_Pathfinding_Defined_Segmented() {};
+	~A_Star_Pathfinding_Defined_Segmented() {
+	};
+	//std::set<Node*, PositionComparator> open; Used for Defined maps
+	std::priority_queue<Node*, std::vector<Node*>, ReverseComparator> toSearchSorted;
+	std::set<Node*, ReverseComparator> toSearch;
+	std::set<Node*> searched;
+
+	Node* root;//Start node
+	Node* target;//End node
+	std::vector<NodeMap*> currentMaps;//Contains Obstacle locations
+	NodeMap* currentMap;//Contains Obstacle locations
+	int nodeSize;//Allows us to take into account of the size of the agent using this(Assuming position is the center of agent, agent will not go halfway inside a wall.)
+
+	/// <summary>
+	/// Searches a space only defined by obstacles.
+	/// </summary>
+	template <typename T> void FindPath(Vector2<T> startPos, Vector2<T> endPos) {
+		int x, y, shift;
+		x = 0;
+		y = 0;
+		if (startPos.x != 0)
+		{
+			shift = nodeSize % startPos.x;//Translate ourselves to nodes positions if we start at 30 but nodesize is 50 then we add 20;
+			x = (startPos.x + shift) / nodeSize;
+		}
+		if (startPos.y != 0)
+		{
+			shift = nodeSize % startPos.y;
+			y = (startPos.y + shift) / nodeSize;
+		}
+		Node* startNode = &currentMap->nodeMap[x][y];
+		x = 0;
+		y = 0;
+		if (endPos.x != 0)
+		{
+			shift = nodeSize % endPos.x;//Translate ourselves to nodes positions if we start at 30 but nodesize is 50 then we add 20;
+			x = (endPos.x + shift) / nodeSize; x--;
+		}
+		if (endPos.y != 0)
+		{
+			shift = nodeSize % endPos.y;
+			y = (endPos.y + shift) / nodeSize; y--;
+		}
+		Node* endNode = &currentMap->nodeMap[x][y];
+
+		//Vector2<int>* epos = new Vector2<int>; epos->x = floorf(endPos.x); epos->y = floorf(endPos.y);
+		//endNode.position = epos;//Vector2<int>(floorf(endPos.x), floorf(endPos.y));
+		//startNode.position = Vector2<int>(floorf(startPos.x), floorf(startPos.y)); 
+		startNode->SetGCost(0); startNode->SetParent(nullptr);
+		startNode->SetHCost(floorf((endPos.x - startPos.x) + (endPos.y - startPos.y))); startNode->SetFCost();
+
+		root = startNode;
+		target = endNode;
+
+		SearchPath();
+	};
+private:
+	void SearchPath();
+	void CheckNeighbours(Node* node);
+	bool InCurrentMap();
+	//void FindNeighbours(Node* node);
+public:
+	void SetMap(NodeMap* nm) {
+		currentMaps.push_back(nm);
+
 		nodeSize = nm->nodeSize;
 	}
 

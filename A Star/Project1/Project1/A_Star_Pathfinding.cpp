@@ -175,7 +175,7 @@ void A_Star_Pathfinding_Undefined::CheckNeighbours(Node* current)
 //	priority.push(neighbour);
 //}
 
-void A_Star_Pathfinding_Default::SearchPath()
+void A_Star_Pathfinding_Defined::SearchPath()
 {
 	toSearch.insert(root);
 
@@ -206,7 +206,7 @@ void A_Star_Pathfinding_Default::SearchPath()
 	}
 }
 
-void A_Star_Pathfinding_Default::CheckNeighbours(Node* current)
+void A_Star_Pathfinding_Defined::CheckNeighbours(Node* current)
 {
 	//For all neighbours : categorise them
 	for (auto neighbour : current->neighbours)
@@ -240,4 +240,44 @@ void A_Star_Pathfinding_Default::CheckNeighbours(Node* current)
 		}
 
 	}
+}
+
+void A_Star_Pathfinding_Defined_Segmented::SearchPath()
+{
+	toSearch.insert(root);
+
+	iterations = 0;
+	//Considering it is an undefined map, there is an unlikely chance that we could ever have a size of zero
+	while (toSearch.size() != 0 && iterations <= 1000)
+	{
+
+		//Find lowest fCost Open Node
+		Node* current = *toSearch.begin();
+
+		//If we found end, stop pathfinding
+		int o = current->DistanceFromM(target->position);//debugging
+		if (current->DistanceFromM(target->position) < nodeSize)
+		{
+			return;
+		}
+
+		//Restructure the node collections
+		toSearch.erase(current);
+		searched.insert(current);
+
+		//Neighbours
+		//current->GenerateNeighbours(nodeSize);
+		CheckNeighbours(current);
+
+		iterations++;
+	}
+}
+
+bool A_Star_Pathfinding_Defined_Segmented::InCurrentMap()
+{
+	if (true)
+	{
+
+	}
+	return false;
 }
