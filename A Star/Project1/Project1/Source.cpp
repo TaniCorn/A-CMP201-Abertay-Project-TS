@@ -1,154 +1,63 @@
 
+#include "CustomLoader.h"
 
-#include "A_Star_Pathfinding.h"
-#include <fstream>
-#include <iostream>
-#include <string>
-
-struct mys {
-    mys(float l) { f = l; };
-    float f;
-
-    bool operator<(const mys& right) const {
-        return f > right.f;
-    }
-};
-
-void CollisionMapRead(NodeMap& nm) {
-    //std::ofstream collisionMap;//
-    std::ifstream collisionMap;
-    collisionMap.open("CollisionMap.txt");
-
-    std::string line;
-    std::vector<std::string> txtInfo;
-    if (collisionMap.is_open())
-    {
-        while (std::getline(collisionMap, line)) {
-            txtInfo.push_back(line);
-        }
-        txtInfo[0].replace(txtInfo[0].find("NodeSize:"), txtInfo[0].find_last_of("NodeSize:") + 1, "");
-    }
-
-    nm.nodeSize = (std::stoi(txtInfo[0]));
-
-    for (int i = 1; i < txtInfo.size(); i++)
-    {
-        int xStart = 0;
-        int xEnd = txtInfo[i].find_last_of(':') + 1;
-        int xCoord = std::stoi(txtInfo[i].substr(xStart, xEnd));
-        int yStart = txtInfo[i].find_last_of(':') + 1;
-        int yEnd = txtInfo[i].npos;
-        int yCoord = std::stoi(txtInfo[i].substr(yStart, yEnd));
-        nm.ObstacleLocations.push_back(Vector2<int>{xCoord, yCoord});
-    }
-}
-void CompleteMapRead(NodeMap& nm) {
-    //std::ofstream collisionMap;//
-    std::ifstream collisionMap;
-    collisionMap.open("CompleteMap50.txt");
-
-    std::string line;
-    std::vector<std::string> txtInfo;
-    if (collisionMap.is_open())
-    {
-        while (std::getline(collisionMap, line)) {
-            txtInfo.push_back(line);
-        }
-        txtInfo[0].replace(txtInfo[0].find("NodeSize:"), txtInfo[0].find_last_of("NodeSize:") + 1, "");
-    }
-
-    int xSize = std::stoi(txtInfo[1]);
-    int ySize = std::stoi(txtInfo[2]);
-    Node** f = new Node *[xSize];
-    std::vector<Node> check;
-    for (int i = 0; i < xSize; i++)
-    {
-        f[i] = new Node[ySize];
-    }
-
-    nm.nodeSize = (std::stoi(txtInfo[0]));
-
-    for (int i = 3; i < txtInfo.size(); i++)
-    {
-        int xStart = 0;
-        int xEnd = txtInfo[i].find_last_of(':') + 1;
-        int xCoord = std::stoi(txtInfo[i].substr(xStart, xEnd));
-        int yStart = txtInfo[i].find_last_of(':') + 1;
-        int yEnd = txtInfo[i].npos - 1;
-        int yCoord = std::stoi(txtInfo[i].substr(yStart, yEnd));
-        char typeOfNode = txtInfo[i].at(txtInfo[i].size() - 1);
-
-        int p = i - 3;
-        int x = (p / xSize); int y = p % ySize;
-        //f[x, y]->position = Vector2<int>(xCoord, yCoord);
-        //f[x, y]->nodeType = NodeType(Obstacle * (typeOfNode == 'O'));
-        f[x][y].position = Vector2<int>(xCoord, yCoord);
-        f[x][y].nodeType = NodeType(Obstacle * (typeOfNode == 'O'));
-        for (int n = 0; n < 8; n++)
-        {
-            f[x][y].neighbours[n] = nullptr;
-        }
-        check.push_back(f[x][y]);
-    }
-    bool newLine = false;
-    for (int x = 0; x < xSize; x++)
-    {
-        for (int y = 0; y < ySize; y++)
-        {
-            if (newLine)
-            {
-               std::cout << f[x][y].nodeType << std::endl;
-                newLine = false;
-            }
-            else {
-                std::cout << f[x][y].nodeType << " | ";
-            }
-            if (f[x][y].nodeType == Obstacle)
-            {
-                nm.ObstacleLocations.push_back(f[x][y].position);
-            }
-        }
-        newLine = true;
-
-    }
-    int si = check.size();
-    int is = xSize * ySize;
-    nm.xSize = xSize; nm.ySize = ySize;
-    nm.nodeMap = f;
-}
 
 int main() {
     A_Star_Pathfinding_Defined_Segmented path;
-    NodeMap nm;
-    CompleteMapRead(nm);
-    nm.LinkNeighbours();
+    Room nm;
+    Room nm1;
+
+    CompleteMapRead(nm, "CompleteMap50.txt");
+    CompleteMapRead(nm1, "CompleteMapBound.txt");
+    DisplaceNodeMap(nm, Vector2<int>(0, -1));
     path.SetMap(&nm);
-    path.FindPath(nm.nodeMap[24][25].position, nm.nodeMap[0][0].position);
 
-    //A_Star_Pathfinding_Undefined path;
-    //NodeMap nm;
-    //CompleteMapRead(&nm);
-    //path.SetMap(&nm);
-    //path.FindPath(nm.nodeMap[0][0].position, nm.nodeMap[x][y].position);
-    path.PrintPath();
-    //path.FindPath(Vector2<int>(1200, 700), Vector2<int>(1400, 900));
-    //path.PrintPath();
-
-    //std::priority_queue<mys> p;
-    //p.push(mys(5));
-    //p.push(mys(1));
-    //p.push(mys(2));
-    //p.push(mys(1));
-    //p.push(mys(3));
-    //p.push(mys(8));
-    //mys l = p.top();
-    //std::cout << p.top()
     return 0;
 }
 
-//Todo:
 /*
-Implement Defined Segmented A star
-Implement Defined A Star
+1.FindMapFor(StartNode)
+2.while(!IsTargetInCurrentMap()){
+3.ImplementRoomAStar()  
+4.}
+5.ImplementDefaultAStar()
+6.return;}
+
+
+3.1ImplementRoomAStar(){
+3.2FindMapFor(EndNode)
+3.3ImplementDefaultAStarOnRoomScale()
+3.4 While temporaryTargets is not empty{
+3.5 ImplementDefaultAStarToTemporaryTarget
+3.6}//When we reach a route node we should calculate a new route using that route node and the next route node as the start and endpoints
+3.7}
+
+3.3.1ImplementDefaultAStarOnRoomScale(){
+3.3.2//When path found
+3.3.3FindRouteNodeConnections();
+3.3.4}
+
+3.3.3.1FindRoutNodeConnections(){
+3.3.3.2std::Queue<Node*> temporaryTargets;//FirstInFirstOut
+3.3.3.3for each routeNodes in MapRoute//starting from current
+3.3.3.4    for each routeNode neighbours
+3.3.3.5        if neighbour is in (MapRoute + 1) then
+3.3.3.6            add routeNode to temporaryTargets
+3.3.3.7            break;
+}
+
+
+What this means:
+Each Node can remain the same
+Each NodeMap will have to be reconfigured to act like nodes as well, but assune that they have infinite neighbours(door in the center teleports to under ground map for example)
+//The need to have neighbours and parents//Maybe there's a nicer way we can do this?
+//Or we could create temporary nodes that take place of the maps, but we just make sure the neihbouring of those are correct. 
+//Then when the path is found we can use the nodes path and map that to the room pathing, with parenting or just a queue
+//Map route doesn't need to be a parenting thing, we could jsut make it a queue/stack
+A Star Default might have to be rebuilt to allow segment to use it?
+
+As for searching the Maps, we might be better off bruteforcing it.
+
+//Currently it's assumed that each node costs 1 to move, change in the future?
 
 */

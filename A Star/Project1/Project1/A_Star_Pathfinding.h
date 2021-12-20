@@ -5,12 +5,12 @@
 //////// Most Recent Update 18/12/2021
 //////// Most Recent change: Changing structure of files and classes
 
+
 #pragma once
 
 #ifndef A_STAR_PATHFINDING_H
 #define A_STAR_PATHFINDING_H
 
-#include <set>
 #include <queue>
 #include "PathfindingMap.h"
 
@@ -59,7 +59,7 @@ public:
 
 	Node* root;//Start node
 	Node* target;//End node
-	NodeMap* currentMap;//Contains Obstacle locations
+	Room* currentMap;//Contains Obstacle locations
 	int nodeSize;//Allows us to take into account of the size of the agent using this(Assuming position is the center of agent, agent will not go halfway inside a wall.)
 
 	/// <summary>
@@ -84,7 +84,7 @@ private:
 	void CheckNeighbours(Node* node);
 	//void FindNeighbours(Node* node);
 public:
-	void SetMap(NodeMap* nm) {
+	void SetMap(Room* nm) {
 		currentMap = nm;
 		nodeSize = nm->nodeSize;
 	}
@@ -119,7 +119,7 @@ public:
 	std::priority_queue<Node*, std::vector<Node*>, ReverseComparator> toSearchSorted;
 	std::set<Node*, ReverseComparator> toSearch;
 	std::set<Node*> searched;
-	NodeMap* currentMap;//Contains Obstacle locations
+	Room* currentMap;//Contains Obstacle locations
 
 	Node* root;//Start node
 	Node* target;//End node
@@ -142,7 +142,7 @@ public:
 			shift = nodeSize % startPos.y;
 			y = (startPos.y + shift) / nodeSize;
 		}
-		Node* startNode = &currentMap->nodeMap[x][y];
+		Node* startNode = &currentMap->Room[x][y];
 		x = 0;
 		y = 0;
 		if (endPos.x != 0)
@@ -155,7 +155,7 @@ public:
 			shift = nodeSize % endPos.y;
 			y = (endPos.y + shift) / nodeSize; y--;
 		}
-		Node* endNode = &currentMap->nodeMap[x][y];
+		Node* endNode = &currentMap->Room[x][y];
 
 		//Vector2<int>* epos = new Vector2<int>; epos->x = floorf(endPos.x); epos->y = floorf(endPos.y);
 		//endNode.position = epos;//Vector2<int>(floorf(endPos.x), floorf(endPos.y));
@@ -173,7 +173,7 @@ private:
 	void CheckNeighbours(Node* node);
 	//void FindNeighbours(Node* node);
 public:
-	void SetMap(NodeMap* nm) {
+	void SetMap(Room* nm) {
 		currentMap = nm;
 
 		nodeSize = nm->nodeSize;
@@ -214,8 +214,9 @@ public:
 
 	Node* root;//Start node
 	Node* target;//End node
-	std::vector<NodeMap*> currentMaps;//Contains Obstacle locations
-	NodeMap* currentMap;//Contains Obstacle locations
+	Node* targetRoute;
+	std::vector<Room*> maps;//Contains Obstacle locations
+	Room* currentMap;//Contains Obstacle locations
 	int nodeSize;//Allows us to take into account of the size of the agent using this(Assuming position is the center of agent, agent will not go halfway inside a wall.)
 
 	/// <summary>
@@ -235,7 +236,7 @@ public:
 			shift = nodeSize % startPos.y;
 			y = (startPos.y + shift) / nodeSize;
 		}
-		Node* startNode = &currentMap->nodeMap[x][y];
+		Node* startNode = &currentMap->Room[x][y];
 		x = 0;
 		y = 0;
 		if (endPos.x != 0)
@@ -248,7 +249,7 @@ public:
 			shift = nodeSize % endPos.y;
 			y = (endPos.y + shift) / nodeSize; y--;
 		}
-		Node* endNode = &currentMap->nodeMap[x][y];
+		Node* endNode = &currentMap->Room[x][y];
 
 		//Vector2<int>* epos = new Vector2<int>; epos->x = floorf(endPos.x); epos->y = floorf(endPos.y);
 		//endNode.position = epos;//Vector2<int>(floorf(endPos.x), floorf(endPos.y));
@@ -264,11 +265,14 @@ public:
 private:
 	void SearchPath();
 	void CheckNeighbours(Node* node);
-	bool InCurrentMap();
+	bool IsNodeInMap(const Room& nm, const Node& n) const; 
+	void InitialFindMap();
+	Node* FindRoute() const;
 	//void FindNeighbours(Node* node);
+	//If the maps are supplied like a tree, or something similar that will tell us what Room connect we could optimise the FindRoute method to search only the necessary maps
 public:
-	void SetMap(NodeMap* nm) {
-		currentMaps.push_back(nm);
+	void SetMap(Room* nm) {
+		maps.push_back(nm);
 
 		nodeSize = nm->nodeSize;
 	}

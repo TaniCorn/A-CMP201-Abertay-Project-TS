@@ -44,5 +44,8 @@
     <ClInclude Include="PathfindingMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CustomLoader.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

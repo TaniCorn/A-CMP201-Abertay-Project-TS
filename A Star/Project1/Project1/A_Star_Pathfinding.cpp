@@ -1,114 +1,5 @@
 #include "A_Star_Pathfinding.h"
 
-//void A_Star_Pathfinding::PrintPath()
-//{
-//	Node* current = Node::targetNode;
-//
-//	while (current->GetParent() != nullptr)
-//	{
-//		std::cout << current->position << std::endl;
-//		std::cout << current->rCost << std::endl;
-//	}
-//}
-
-//template <typename T> void A_Star_Pathfinding::FindPath(Vector2<T> startPos, Vector2<T> endPos) {
-//
-//
-//	Node* endNode = new Node(); 
-//	endNode.position = Vector2<int>(floorf(endPos.x), floorf(endPos.y));
-//	Node startNode = new Node(); 
-//	startNode.position = Vector2<int>(floorf(startPos.x), floorf(startPos.y)); startNode.gCost = 0; startNode.hCost = floorf((endPos.x - startPos.x) + (endPos.y - startPos.y)); startNode.fCost = startNode.hCost + 0;
-//	
-//	Node::rootNode = &startNode;
-//	Node::targetNode = &endNode;
-//
-//	std::priority_queue<Node*, std::vector<Node*>, ReverseComparator> priority;
-//	std::priority_queue<Node*, std::vector<Node*>, ReverseComparator> conflicts;
-//
-//	priority.push(&startNode);
-//	open.emplace(&startNode);
-//
-//	int iterations = 0;
-//	while (open.size() != 0 || iterations != 5000)
-//	{
-//
-//		//Find lowest fCost Open Node
-//		//std::set<Node*>::iterator it = open.begin();
-//		//Node* current = *open.begin();
-//		Node* current = priority.top();
-//		/*for (it = open.begin(); it != open.end(); it++)
-//		{
-//			Node* closeComp = *it;
-//
-//			if (current->hCost < closeComp->hCost)
-//			{
-//				continue;
-//			}
-//			current = closeComp;
-//		}*/
-//
-//
-//		//If we found end, stop pathfinding
-//		if (current->DistanceFrom(Node::targetNode->position))
-//		{
-//			Node::targetNode->SetParent(current);
-//			return;
-//		}
-//
-//		//Restructure the current node
-//		priority.pop();
-//		open.erase(current);
-//		closed.insert(current);
-//
-//		//Neighbours
-//		current->GenerateAndCalculateNeighbours();
-//
-//		for (auto neighbour : current->neighbours)
-//		{
-//			//Parent
-//			if (neighbour == nullptr)
-//			{
-//				continue;
-//			}
-//
-//			//if neighbour exists in closed, continue
-//			if (closed.find(neighbour) != closed.end())
-//			{
-//				continue;
-//			}
-//			//if neighbour does not exist in open, insert them into open
-//			if (open.find(neighbour) != open.end())
-//			{
-//				open.insert(neighbour);
-//				priority.push(neighbour);
-//			}
-//
-//		}
-//
-//		//closed.insert(allOpen);
-//		//fCostNeighbours.pop();
-//		iterations++;
-//	}
-//
-//	//assert(iterations != 5000);
-//	//open.swap(openTemp);
-//}
-
-//void A_Star_Pathfinding::FindNeighbours(Node* node)
-//{
-//	std::set<Node*>::iterator it = closed.begin();
-//	Node* current = *closed.begin();
-//	for (it = open.begin(); it != open.end(); it++)
-//	{
-//		Node* closeComp = *it;
-//
-//		if (current->hCost < closeComp->hCost)
-//		{
-//			continue;
-//		}
-//		current = closeComp;
-//	}
-//}
 
 void A_Star_Pathfinding_Undefined::SearchPath()
 {
@@ -273,11 +164,39 @@ void A_Star_Pathfinding_Defined_Segmented::SearchPath()
 	}
 }
 
-bool A_Star_Pathfinding_Defined_Segmented::InCurrentMap()
+void A_Star_Pathfinding_Defined_Segmented::CheckNeighbours(Node* node)
 {
-	if (true)
-	{
-
-	}
-	return false;
 }
+
+bool A_Star_Pathfinding_Defined_Segmented::IsNodeInMap(const Room& nm, const Node& target) const
+{
+	if (nm.highestCoord.x < target.position.x) { return false; }
+	if (nm.lowestCoord.x > target.position.x) { return false; }
+	if (nm.highestCoord.y < target.position.y) { return false; }
+	if (nm.lowestCoord.y > target.position.y){return false;}
+
+	return true;
+}
+
+void A_Star_Pathfinding_Defined_Segmented::InitialFindMap()
+{
+	for (auto nm : maps)
+	{
+		if (!IsNodeInMap(*nm, *root))
+		{
+			continue;
+		}
+		currentMap = nm;
+
+		if (IsNodeInMap(*nm, *target))
+		{
+			return;
+		}
+		FindRoute();
+	}
+}
+
+Node* A_Star_Pathfinding_Defined_Segmented::FindRoute() const
+{
+}
+

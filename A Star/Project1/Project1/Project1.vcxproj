@@ -147,6 +147,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="A_Star_Pathfinding.h" />
+    <ClInclude Include="CustomLoader.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="PathfindingMap.h" />
     <ClInclude Include="VectorPositions.h" />
