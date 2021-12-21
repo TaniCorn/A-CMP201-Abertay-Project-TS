@@ -11,6 +11,7 @@
 #ifndef A_STAR_PATHFINDING_H
 #define A_STAR_PATHFINDING_H
 
+#include <stack>
 #include <queue>
 #include "PathfindingMap.h"
 
@@ -207,69 +208,42 @@ public:
 	A_Star_Pathfinding_Defined_Segmented() {};
 	~A_Star_Pathfinding_Defined_Segmented() {
 	};
-	//std::set<Node*, PositionComparator> open; Used for Defined maps
-	std::priority_queue<Node*, std::vector<Node*>, ReverseComparator> toSearchSorted;
 	std::set<Node*, ReverseComparator> toSearch;
 	std::set<Node*> searched;
 
 	Node* root;//Start node
 	Node* target;//End node
-	Node* targetRoute;
+
 	std::vector<Room*> maps;//Contains Obstacle locations
-	Room* currentMap;//Contains Obstacle locations
+	Room* currentRoom;//Contains Obstacle locations
+
 	int nodeSize;//Allows us to take into account of the size of the agent using this(Assuming position is the center of agent, agent will not go halfway inside a wall.)
 
 	/// <summary>
 	/// Searches a space only defined by obstacles.
 	/// </summary>
 	template <typename T> void FindPath(Vector2<T> startPos, Vector2<T> endPos) {
-		int x, y, shift;
-		x = 0;
-		y = 0;
-		if (startPos.x != 0)
-		{
-			shift = nodeSize % startPos.x;//Translate ourselves to nodes positions if we start at 30 but nodesize is 50 then we add 20;
-			x = (startPos.x + shift) / nodeSize;
-		}
-		if (startPos.y != 0)
-		{
-			shift = nodeSize % startPos.y;
-			y = (startPos.y + shift) / nodeSize;
-		}
-		Node* startNode = &currentMap->Room[x][y];
-		x = 0;
-		y = 0;
-		if (endPos.x != 0)
-		{
-			shift = nodeSize % endPos.x;//Translate ourselves to nodes positions if we start at 30 but nodesize is 50 then we add 20;
-			x = (endPos.x + shift) / nodeSize; x--;
-		}
-		if (endPos.y != 0)
-		{
-			shift = nodeSize % endPos.y;
-			y = (endPos.y + shift) / nodeSize; y--;
-		}
-		Node* endNode = &currentMap->Room[x][y];
-
-		//Vector2<int>* epos = new Vector2<int>; epos->x = floorf(endPos.x); epos->y = floorf(endPos.y);
-		//endNode.position = epos;//Vector2<int>(floorf(endPos.x), floorf(endPos.y));
-		//startNode.position = Vector2<int>(floorf(startPos.x), floorf(startPos.y)); 
-		startNode->SetGCost(0); startNode->SetParent(nullptr);
-		startNode->SetHCost(floorf((endPos.x - startPos.x) + (endPos.y - startPos.y))); startNode->SetFCost();
-
-		root = startNode;
-		target = endNode;
-
+		startPos = Vector2<int>(startPos);
+		endPos = Vector2<int>(endPos);
+		
+		FindCurrentMap(startPos);
+		SetUpStartAndEndNodes(startPos, endPos);
 		SearchPath();
 	};
 private:
 	void SearchPath();
-	void CheckNeighbours(Node* node);
-	bool IsNodeInMap(const Room& nm, const Node& n) const; 
-	void InitialFindMap();
+	void SetUpStartAndEndNodes(Vector2<int> startPos, Vector2<int> endPos);
+
+	bool IsNodeInRoom(const RoomStruct& nm, const Node& n) const; 
+	bool IsNodeInRoom(const RoomStruct& nm, const Vector2<int> position) const; 
+	void FindCurrentMap(const Vector2<int> rootPosition);
 	Node* FindRoute() const;
+	std::stack<RoomStruct*> BruteForcePathfindMaps();
+	std::queue<Node*> FindRouteNodePaths(std::stack<RoomStruct*> mapRoute);
 	//void FindNeighbours(Node* node);
 	//If the maps are supplied like a tree, or something similar that will tell us what Room connect we could optimise the FindRoute method to search only the necessary maps
+	bool DefaultAStar(Node& startNode, Node& endNode);
+	void CheckNeighbours(Node* node, Node& targetNode, std::set<Node*, ReverseComparator> open, std::set<Node*> closed);
 public:
 	void SetMap(Room* nm) {
 		maps.push_back(nm);
