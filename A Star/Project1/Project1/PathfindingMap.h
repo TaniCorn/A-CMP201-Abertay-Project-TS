@@ -53,9 +53,9 @@ public:
 	void SetLowestCoord(Vector2<int> low) { lowestCoord = low; } void SetHighestCoord(Vector2<int> high) { highestCoord = high; }
 	std::set<RoomStruct*> GetNeighbouringRooms() const { return neighbouringRooms; } void SetNeighbouringRooms(std::set<RoomStruct*> nr) { neighbouringRooms = nr; }
 	RoomStruct* GetParentRoom() const { return parent; } void SetParentRoom(RoomStruct* rs) { parent = rs; }
-	std::set<Node*> GetRouteNodes() { return routeNodes; } void SetRoutNodes(std::set<Node*> n) { routeNodes = n };
+	std::set<Node*> GetRouteNodes() { return routeNodes; } void SetRoutNodes(std::set<Node*> n) { routeNodes = n; }
 
-	std::vector<Vector2<int>> GetObstacleLocations() const { return obstacleLocations; }void GetObstacleLocations(std::vector<Vector2<int>> ol) { obstacleLocations = ol; }
+	std::vector<Vector2<int>> GetObstacleLocations() const { return obstacleLocations; }void SetObstacleLocations(std::vector<Vector2<int>> ol) { obstacleLocations = ol; }
 };
 
 

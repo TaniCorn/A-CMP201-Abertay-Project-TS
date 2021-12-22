@@ -9,6 +9,7 @@ void CollisionMapRead(Room& nm) {
     std::ifstream collisionMap;
     collisionMap.open("CollisionMap.txt");
 
+    std::vector<Vector2<int>> obstacleLocations;
     std::string line;
     std::vector<std::string> txtInfo;
     if (collisionMap.is_open())
@@ -18,8 +19,7 @@ void CollisionMapRead(Room& nm) {
         }
         txtInfo[0].replace(txtInfo[0].find("NodeSize:"), txtInfo[0].find_last_of("NodeSize:") + 1, "");
     }
-
-    nm.nodeSize = (std::stoi(txtInfo[0]));
+    nm.SetNodeSize(std::stoi(txtInfo[0]));
 
     for (int i = 1; i < txtInfo.size(); i++)
     {
@@ -29,8 +29,9 @@ void CollisionMapRead(Room& nm) {
         int yStart = txtInfo[i].find_last_of(':') + 1;
         int yEnd = txtInfo[i].npos;
         int yCoord = std::stoi(txtInfo[i].substr(yStart, yEnd));
-        nm.ObstacleLocations.push_back(Vector2<int>{xCoord, yCoord});
+        obstacleLocations.push_back(Vector2<int>{xCoord, yCoord});
     }
+    nm.SetObstacleLocations(obstacleLocations);
 }
 void CompleteMapRead(Room& nm, std::string fileName) {
     //std::ofstream collisionMap;//
@@ -56,7 +57,7 @@ void CompleteMapRead(Room& nm, std::string fileName) {
         f[i] = new Node[ySize];
     }
 
-    nm.nodeSize = (std::stoi(txtInfo[0]));
+    std::vector<Vector2<int>> obstacleLocations;
     Vector2<int> lowest = Vector2<int>(9999, 9999), highest = Vector2<int>(-9999, -9999);
     std::set<Node*> routes;
     for (int i = 3; i < txtInfo.size(); i++)
@@ -109,28 +110,30 @@ void CompleteMapRead(Room& nm, std::string fileName) {
             }
             if (f[x][y].nodeType == Obstacle)
             {
-                nm.ObstacleLocations.push_back(f[x][y].position);
+                obstacleLocations.push_back(f[x][y].position);
             }
         }
         newLine = true;
 
     }
+    nm.SetNodeSize(std::stoi(txtInfo[0]));
+    nm.SetObstacleLocations(obstacleLocations);
     std::cout << std::endl;
     int si = check.size();
     int is = xSize * ySize;
-    nm.xSize = xSize; nm.ySize = ySize;
+    nm.SetXSize(xSize); nm.SetYSize(ySize);
     nm.nodes = f;
-    nm.lowestCoord = lowest;
-    nm.highestCoord = highest;
-    nm.routeNodes = routes;
+    nm.SetLowestCoord(lowest);
+    nm.SetHighestCoord(highest);
+    nm.SetRoutNodes(routes) ;
 }
 
 void DisplaceNodeMap(Room& nm, Vector2<int> direction) {
     for (int x = 0; x < nm.GetXSize() - 1; x++)
     {
-        for (int y = 0; y < nm.ySize - 1; y++)
+        for (int y = 0; y < nm.GetYSize() - 1; y++)
         {
-            nm.nodes[x][y].position += Vector2<int>(direction.x * nm.highestCoord.x, direction.y * nm.highestCoord.y);
+            nm.nodes[x][y].position += Vector2<int>(direction.x * nm.GetHighestCoord().x, direction.y * nm.GetHighestCoord().y);
         }
     }
 }

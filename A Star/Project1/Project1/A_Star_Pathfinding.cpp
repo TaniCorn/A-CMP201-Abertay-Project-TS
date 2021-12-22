@@ -1,139 +1,9 @@
 #include "A_Star_Pathfinding.h"
 
+#pragma region BASE_ASTAR
 
-void A_Star_Pathfinding_Undefined::SearchPath()
-{
-	toSearch.push(root);
 
-	iterations = 0;
-	//Considering it is an undefined map, there is an unlikely chance that we could ever have a size of zero
-	while (toSearch.size() != 0 && iterations != 1000)
-	{
-
-		//Find lowest fCost Open Node
-		Node* current = toSearch.top();
-
-		//If we found end, stop pathfinding
-		int o = current->DistanceFromM(target->position);//debugging
-		if (current->DistanceFromM(target->position) < nodeSize)
-		{
-			target->SetParent(current);
-			return;
-		}
-
-		//Restructure the node collections
-		toSearch.pop();
-
-		//Neighbours
-		current->GenerateNeighbours(nodeSize);
-		CheckNeighbours(current);
-
-		iterations++;
-	}
-}
-
-void A_Star_Pathfinding_Undefined::CheckNeighbours(Node* current)
-{
-	//For all neighbours : categorise them
-	for (auto neighbour : current->neighbours)
-	{
-		//Parent node
-		if (neighbour == nullptr)
-		{
-			continue;
-		}
-		neighbour->CalculateNodeType(currentMap->GetObstacleLocations(), nodeSize);
-		//If node is an obstacle add it to closed and continue
-		if (neighbour->nodeType == Obstacle)
-		{
-			continue;
-		}
-		int newGCost = current->GetGCost() + 1; 
-		int newHCost = Node::DistanceBetweenM(*neighbour, *target);
-		neighbour->SetGCost(newGCost); neighbour->SetHCost(newHCost); neighbour->SetFCost();
-		toSearch.push(neighbour);
-
-	}
-}
-////if neighbour exists in closed, continue ///Shouldn't happen unless the path loops back on itself
-//if (searched.find(neighbour) != searched.end())
-//{
-//	continue;
-//}
-//if (open.find(neighbour) == open.end())
-//{
-//	open.insert(neighbour);
-//	priority.push(neighbour);
-//}
-
-void A_Star_Pathfinding_Defined::SearchPath()
-{
-	toSearch.insert(root);
-
-	iterations = 0;
-	//Considering it is an undefined map, there is an unlikely chance that we could ever have a size of zero
-	while (toSearch.size() != 0 && iterations <= 1000)
-	{
-
-		//Find lowest fCost Open Node
-		Node* current = *toSearch.begin();
-		
-		//If we found end, stop pathfinding
-		int o = current->DistanceFromM(target->position);//debugging
-		if (current->DistanceFromM(target->position) < nodeSize)
-		{
-			return;
-		}
-
-		//Restructure the node collections
-		toSearch.erase(current);
-		searched.insert(current);
-
-		//Neighbours
-		//current->GenerateNeighbours(nodeSize);
-		CheckNeighbours(current);
-
-		iterations++;
-	}
-}
-
-void A_Star_Pathfinding_Defined::CheckNeighbours(Node* current)
-{
-	//For all neighbours : categorise them
-	for (auto neighbour : current->neighbours)
-	{
-		//Parent node
-		if (neighbour == nullptr || neighbour->nodeType == Obstacle || searched.find(neighbour) != searched.end())
-		{
-			continue;
-		}
-
-		int newGCost = current->GetGCost() + 1;
-		bool inToSearch = toSearch.find(neighbour) == toSearch.end();
-		//If neighbour is in either open, and the new path is better, recalculate
-		if (!inToSearch && neighbour->GetGCost() > newGCost)
-		{
-			neighbour->SetGCost(newGCost);
-			neighbour->SetFCost();
-			neighbour->SetParent(current);
-			continue;
-		}
-		//If neighbour is not in open, set
-		if (inToSearch)
-		{
-			int newHCost = Node::DistanceBetweenM(*neighbour, *target);
-			neighbour->SetGCost(newGCost);
-			neighbour->SetHCost(newHCost); 
-			neighbour->SetFCost();
-			neighbour->SetParent(current);
-			toSearch.insert(neighbour);
-
-		}
-
-	}
-}
-
-void A_Star_Pathfinding_Defined_Segmented::SetUpStartAndEndNodes(Vector2<int> startPos, Vector2<int> endPos)
+void Base_A_Star_Pathfinding::SetUpStartAndEndNodes(Vector2<int> startPos, Vector2<int> endPos)
 {
 	int x, y, shift;
 	x = 0;
@@ -173,7 +43,195 @@ void A_Star_Pathfinding_Defined_Segmented::SetUpStartAndEndNodes(Vector2<int> st
 	target = endNode;
 }
 
-void A_Star_Pathfinding_Defined_Segmented::SearchPath()
+bool Base_A_Star_Pathfinding::IsNodeInRoom(const RoomStruct& nm, const Node& target)
+{
+	if (nm.GetHighestCoord().x < target.position.x) { return false; }
+	if (nm.GetLowestCoord().x > target.position.x) { return false; }
+	if (nm.GetHighestCoord().y < target.position.y) { return false; }
+	if (nm.GetLowestCoord().y > target.position.y) { return false; }
+
+	return true;
+}
+
+bool Base_A_Star_Pathfinding::IsNodeInRoom(const RoomStruct& nm, const Vector2<int> position)
+{
+	if (nm.GetHighestCoord().x < position.x) { return false; }
+	if (nm.GetLowestCoord().x > position.x) { return false; }
+	if (nm.GetHighestCoord().y < position.y) { return false; }
+	if (nm.GetLowestCoord().y > position.y) { return false; }
+
+	return true;
+}
+#pragma endregion
+
+
+
+
+#pragma region UNDEFINED_VARIANT
+void A_Star_Pathfinding_Undefined::AStarAlgorithm()
+{
+	toSearch.push(root);
+
+	iterations = 0;
+	//Considering it is an undefined map, there is an unlikely chance that we could ever have a size of zero
+	while (toSearch.size() != 0 && iterations != 1000)
+	{
+
+		//Find lowest fCost Open Node
+		Node* current = toSearch.top();
+
+		//If we found end, stop pathfinding
+		int o = current->DistanceFromM(target->position);//debugging
+		if (current->DistanceFromM(target->position) < nodeSize)
+		{
+			target->SetParent(current);
+			return;
+		}
+
+		//Restructure the node collections
+		toSearch.pop();
+
+		//Neighbours
+		current->GenerateNeighbours(nodeSize);
+		CheckNeighbours(current);
+
+		iterations++;
+	}
+}
+
+void A_Star_Pathfinding_Undefined::SetUpStartAndEndNodes(Vector2<int> startPos, Vector2<int> endPos)
+{
+	Node* endNode = new Node(endPos);
+	Node* startNode = new Node(startPos);
+
+	startNode->SetGCost(0); startNode->SetParent(nullptr);
+	startNode->SetHCost(floorf((endPos.x - startPos.x) + (endPos.y - startPos.y))); startNode->SetFCost();
+
+	root = startNode;
+	target = endNode;
+}
+
+void A_Star_Pathfinding_Undefined::CheckNeighbours(Node* current)
+{
+	//For all neighbours : categorise them
+	for (auto neighbour : current->neighbours)
+	{
+		//Parent node
+		if (neighbour == nullptr)
+		{
+			continue;
+		}
+		neighbour->CalculateNodeType(currentRoom->GetObstacleLocations(), nodeSize);
+		//If node is an obstacle add it to closed and continue
+		if (neighbour->nodeType == Obstacle)
+		{
+			continue;
+		}
+		int newGCost = current->GetGCost() + 1;
+		int newHCost = Node::DistanceBetweenM(*neighbour, *target);
+		neighbour->SetGCost(newGCost); neighbour->SetHCost(newHCost); neighbour->SetFCost();
+		toSearch.push(neighbour);
+
+	}
+}
+////if neighbour exists in closed, continue ///Shouldn't happen unless the path loops back on itself
+//if (searched.find(neighbour) != searched.end())
+//{
+//	continue;
+//}
+//if (open.find(neighbour) == open.end())
+//{
+//	open.insert(neighbour);
+//	priority.push(neighbour);
+//}
+#pragma endregion
+
+
+#pragma region DEFINED_VARIANT
+
+void A_Star_Pathfinding_Defined::AStarAlgorithm()
+{
+	openSet.insert(root);
+
+	iterations = 0;
+	//Considering it is an undefined map, there is an unlikely chance that we could ever have a size of zero
+	while (openSet.size() != 0 && iterations <= 1000)
+	{
+
+		//Find lowest fCost Open Node
+		Node* current = *openSet.begin();
+
+		//If we found end, stop pathfinding
+		int o = current->DistanceFromM(target->position);//debugging
+		if (current->DistanceFromM(target->position) < nodeSize)
+		{
+			return;
+		}
+
+		//Restructure the node collections
+		openSet.erase(current);
+		closedSet.insert(current);
+
+		//Neighbours
+		//current->GenerateNeighbours(nodeSize);
+		CheckNeighbours(current);
+
+		iterations++;
+	}
+}
+
+void A_Star_Pathfinding_Defined::CheckNeighbours(Node* current)
+{
+	//For all neighbours : categorise them
+	for (auto neighbour : current->neighbours)
+	{
+		//Parent node
+		if (neighbour == nullptr || neighbour->nodeType == Obstacle || closedSet.find(neighbour) != closedSet.end())
+		{
+			continue;
+		}
+
+		int newGCost = current->GetGCost() + 1;
+		bool inToSearch = openSet.find(neighbour) == openSet.end();
+		//If neighbour is in either open, and the new path is better, recalculate
+		if (!inToSearch && neighbour->GetGCost() > newGCost)
+		{
+			neighbour->SetGCost(newGCost);
+			neighbour->SetFCost();
+			neighbour->SetParent(current);
+			continue;
+		}
+		//If neighbour is not in open, set
+		if (inToSearch)
+		{
+			int newHCost = Node::DistanceBetweenM(*neighbour, *target);
+			neighbour->SetGCost(newGCost);
+			neighbour->SetHCost(newHCost);
+			neighbour->SetFCost();
+			neighbour->SetParent(current);
+			openSet.insert(neighbour);
+
+		}
+
+	}
+}
+#pragma endregion
+
+
+#pragma region SEGMENTED
+void A_Star_Pathfinding_Defined_Segmented::FindCurrentRoom(const Vector2<int> rootPosition)
+{
+	for (int i = 0; i < maps.size(); i++)
+	{
+		if (IsNodeInRoom(*maps[i], rootPosition))
+		{
+			currentRoom = maps[i];
+			return;
+		}
+	}
+}
+
+void A_Star_Pathfinding_Defined_Segmented::AStarAlgorithm()
 {
 	Node* current = root;
 
@@ -198,47 +256,12 @@ void A_Star_Pathfinding_Defined_Segmented::SearchPath()
 		}
 	}
 	//Search normally towards the target node
-	if (DefaultAStar(current, target)
+	if (DefaultAStar(*current, *target))
 	{
-
+		//Retrace path
 	}
-
+	return;
 }
-
-
-
-bool A_Star_Pathfinding_Defined_Segmented::IsNodeInRoom(const RoomStruct& nm, const Node& target) const
-{
-	if (nm.GetHighestCoord().x < target.position.x) { return false; }
-	if (nm.GetLowestCoord().x > target.position.x) { return false; }
-	if (nm.GetHighestCoord().y < target.position.y) { return false; }
-	if (nm.GetLowestCoord().y > target.position.y){return false;}
-
-	return true;
-}
-
-bool A_Star_Pathfinding_Defined_Segmented::IsNodeInRoom(const RoomStruct& nm, const Vector2<int> position) const
-{
-	if (nm.GetHighestCoord().x < position.x) { return false; }
-	if (nm.GetLowestCoord().x > position.x) { return false; }
-	if (nm.GetHighestCoord().y < position.y) { return false; }
-	if (nm.GetLowestCoord().y > position.y) { return false; }
-
-	return true;
-}
-
-void A_Star_Pathfinding_Defined_Segmented::FindCurrentMap(const Vector2<int> rootPosition)
-{
-	for (int i = 0; i < maps.size(); i++)
-	{
-		if (IsNodeInRoom(*maps[i], rootPosition))
-		{
-			currentRoom = maps[i];
-			return;
-		}
-	}
-}
-
 
 std::stack<RoomStruct*> A_Star_Pathfinding_Defined_Segmented::BruteForcePathfindMaps()
 {
@@ -293,7 +316,7 @@ std::queue<Node*> A_Star_Pathfinding_Defined_Segmented::FindRouteNodePaths(std::
 				Node* currentNeighbour = routeNode->neighbours[i];
 				if (currentNeighbour != nullptr)
 				{
-					if (IsNodeInRoom(*mapRoute.top() ,*currentNeighbour))
+					if (IsNodeInRoom(*mapRoute.top(), *currentNeighbour))
 					{
 						temporaryTargets.push(currentNeighbour);
 						break;//Unsure if this does as desired. I want it to break the auto loop and move to the next map
@@ -308,7 +331,7 @@ std::queue<Node*> A_Star_Pathfinding_Defined_Segmented::FindRouteNodePaths(std::
 bool A_Star_Pathfinding_Defined_Segmented::DefaultAStar(Node& startNode, Node& endNode)
 {
 	std::set<Node*, ReverseComparator> open;
-	std::set<Node*> closed; 
+	std::set<Node*> closed;
 	open.insert(&startNode);
 
 	iterations = 0;
@@ -337,6 +360,7 @@ bool A_Star_Pathfinding_Defined_Segmented::DefaultAStar(Node& startNode, Node& e
 	}
 	return false;
 }
+
 void A_Star_Pathfinding_Defined_Segmented::CheckNeighbours(Node* current, Node& targetNode, std::set<Node*, ReverseComparator> open, std::set<Node*> closed)
 {
 	//For all neighbours : categorise them
@@ -372,3 +396,7 @@ void A_Star_Pathfinding_Defined_Segmented::CheckNeighbours(Node* current, Node& 
 
 	}
 }
+#pragma endregion
+
+
+

@@ -45,52 +45,37 @@ public:
 //	}
 //};
 
-/// <summary>
-/// This algorithm will allow duplicate node checks however it should avoid the issue of having to check open and closed nodes and compare it to the newly made nodes on a unknown mapping(no predetermined grid that is generated)
-/// <para>This Algorithm will search an undefined area. Because of this there are inefficiencies as one would have to expect, as there is a chance it will generate nodes that have already been generated, instead of recalculating them
-/// ,however this has to be done because we don't keep unique nodes, this way we don't need to needlessly search open and closed nodes that are no where near our path.</para>
-/// <para>Theory: This version would work best with straighforward paths, and very far away targets. The target moving does not hold much difference, as no matter what version, a moving target will always be costly. The more complex the path, the worse it will get, I predict it will be the worst of all if there is complex obstacles as we will be making multiple paths, possibly hundreds</para>
-/// </summary>
-class A_Star_Pathfinding_Undefined
-{
+class Base_A_Star_Pathfinding {
 public:
-	//std::set<Node*, PositionComparator> open; Used for Defined maps
-	std::priority_queue<Node*, std::vector<Node*>, ReverseComparator> toSearch;
-	//std::set<Node*, PositionComparator> searched;
-
 	Node* root;//Start node
 	Node* target;//End node
-	Room* currentMap;//Contains Obstacle locations
+	Room* currentRoom;//Contains Obstacle locations
 	int nodeSize;//Allows us to take into account of the size of the agent using this(Assuming position is the center of agent, agent will not go halfway inside a wall.)
 
-	/// <summary>
-	/// Searches a space only defined by obstacles.
-	/// </summary>
+	int iterations;//For Debug and checking
+
+	#pragma region MANDATORY_BASE_FUNCTIONS
 	template <typename T> void FindPath(Vector2<T> startPos, Vector2<T> endPos) {
-		Node* endNode = new Node(endPos);
-		//Vector2<int>* epos = new Vector2<int>; epos->x = floorf(endPos.x); epos->y = floorf(endPos.y);
-		//endNode.position = epos;//Vector2<int>(floorf(endPos.x), floorf(endPos.y));
-		Node* startNode = new Node(startPos);
-		//startNode.position = Vector2<int>(floorf(startPos.x), floorf(startPos.y)); 
-		startNode->SetGCost(0); startNode->SetParent(nullptr);
-		startNode->SetHCost(floorf((endPos.x -startPos.x) + (endPos.y -startPos.y))); startNode->SetFCost();
+		startPos = Vector2<int>(startPos);
+		endPos = Vector2<int>(endPos);
 
-		root = startNode;
-		target = endNode;
-
+		FindCurrentMap(startPos);
+		SetUpStartAndEndNodes(startPos, endPos);
 		SearchPath();
 	};
-private:
-	void SearchPath();
-	void CheckNeighbours(Node* node);
-	//void FindNeighbours(Node* node);
-public:
-	void SetMap(Room* nm) {
-		currentMap = nm;
-		nodeSize = nm->nodeSize;
-	}
+	virtual void FindCurrentRoom(const Vector2<int> rootPosition) { if (!Base_A_Star_Pathfinding::IsNodeInRoom(*currentRoom, rootPosition)) { return; } std::cout << "Room ok! \n"; };
+	virtual void SetUpStartAndEndNodes(Vector2<int> startPos, Vector2<int> endPos);
+	virtual void AStarAlgorithm() = 0;
+	#pragma endregion
 
-		/// <summary>
+	#pragma region HELPER_FUNCTIONS
+	static bool IsNodeInRoom(const RoomStruct& nm, const Node& n);
+	static bool IsNodeInRoom(const RoomStruct& nm, const Vector2<int> position);
+	#pragma endregion
+
+
+
+			/// <summary>
 	/// For Debuggin purposes
 	/// </summary>
 	void PrintPath() {
@@ -108,102 +93,47 @@ public:
 	void PrintNode(Node* n) {
 		std::cout << "GCost:" << n->GetGCost() << " | FCost:" << n->GetFCost() << " | Position:" << n->position << std::endl;
 	}
-	int iterations;//For Debug and checking
+
+	void SetCurrentMap(Room* nm) {
+		currentRoom = nm;
+		nodeSize = nm->GetNodeSize();
+	}
+protected:
+
 };
 
-class A_Star_Pathfinding_Defined {
+/// <summary>
+/// This algorithm will allow duplicate node checks however it should avoid the issue of having to check open and closed nodes and compare it to the newly made nodes on a unknown mapping(no predetermined grid that is generated)
+/// <para>This Algorithm will search an undefined area. Because of this there are inefficiencies as one would have to expect, as there is a chance it will generate nodes that have already been generated, instead of recalculating them
+/// ,however this has to be done because we don't keep unique nodes, this way we don't need to needlessly search open and closed nodes that are no where near our path.</para>
+/// <para>Theory: This version would work best with straighforward paths, and very far away targets. The target moving does not hold much difference, as no matter what version, a moving target will always be costly. The more complex the path, the worse it will get, I predict it will be the worst of all if there is complex obstacles as we will be making multiple paths, possibly hundreds</para>
+/// </summary>
+class A_Star_Pathfinding_Undefined : Base_A_Star_Pathfinding
+{
+public:
+	std::priority_queue<Node*, std::vector<Node*>, ReverseComparator> toSearch;
+
+private:
+	void AStarAlgorithm() override;
+	void SetUpStartAndEndNodes(Vector2<int> startPos, Vector2<int> endPos) override;
+	void CheckNeighbours(Node* node);
+};
+
+class A_Star_Pathfinding_Defined : Base_A_Star_Pathfinding {
 public:
 	A_Star_Pathfinding_Defined() {};
 	~A_Star_Pathfinding_Defined() {
 	};
-	//std::set<Node*, PositionComparator> open; Used for Defined maps
-	std::priority_queue<Node*, std::vector<Node*>, ReverseComparator> toSearchSorted;
-	std::set<Node*, ReverseComparator> toSearch;
-	std::set<Node*> searched;
-	Room* currentMap;//Contains Obstacle locations
+	std::set<Node*, ReverseComparator> openSet;
+	std::set<Node*> closedSet;
 
-	Node* root;//Start node
-	Node* target;//End node
-	int nodeSize;//Allows us to take into account of the size of the agent using this(Assuming position is the center of agent, agent will not go halfway inside a wall.)
-
-	/// <summary>
-	/// Searches a space only defined by obstacles.
-	/// </summary>
-	template <typename T> void FindPath(Vector2<T> startPos, Vector2<T> endPos) {
-		int x, y, shift;
-		x = 0;
-		y = 0;
-		if (startPos.x != 0)
-		{
-			shift = nodeSize % startPos.x;//Translate ourselves to nodes positions if we start at 30 but nodesize is 50 then we add 20;
-			x = (startPos.x + shift) / nodeSize;
-		}
-		if (startPos.y != 0)
-		{
-			shift = nodeSize % startPos.y;
-			y = (startPos.y + shift) / nodeSize;
-		}
-		Node* startNode = &currentMap->Room[x][y];
-		x = 0;
-		y = 0;
-		if (endPos.x != 0)
-		{
-			shift = nodeSize % endPos.x;//Translate ourselves to nodes positions if we start at 30 but nodesize is 50 then we add 20;
-			x = (endPos.x + shift) / nodeSize; x--;
-		}
-		if (endPos.y != 0)
-		{
-			shift = nodeSize % endPos.y;
-			y = (endPos.y + shift) / nodeSize; y--;
-		}
-		Node* endNode = &currentMap->Room[x][y];
-
-		//Vector2<int>* epos = new Vector2<int>; epos->x = floorf(endPos.x); epos->y = floorf(endPos.y);
-		//endNode.position = epos;//Vector2<int>(floorf(endPos.x), floorf(endPos.y));
-		//startNode.position = Vector2<int>(floorf(startPos.x), floorf(startPos.y)); 
-		startNode->SetGCost(0); startNode->SetParent(nullptr);
-		startNode->SetHCost(floorf((endPos.x - startPos.x) + (endPos.y - startPos.y))); startNode->SetFCost();
-
-		root = startNode;
-		target = endNode;
-
-		SearchPath();
-	};
 private:
-	void SearchPath();
+	void AStarAlgorithm() override;
 	void CheckNeighbours(Node* node);
 	//void FindNeighbours(Node* node);
-public:
-	void SetMap(Room* nm) {
-		currentMap = nm;
-
-		nodeSize = nm->nodeSize;
-	}
-
-	/// <summary>
-/// For Debuggin purposes
-/// </summary>
-	void PrintPath() {
-
-		Node* current = target;
-		std::cout << " It " << iterations << "Times it took" << std::endl;
-
-		while (current->GetParent() != nullptr)
-		{
-			current = current->GetParent();
-			std::cout << current->position << std::endl;
-			std::cout << current->GetGCost() << std::endl;
-		}
-		std::cout << " It " << iterations << "Times it took" << std::endl;
-
-	};
-	void PrintNode(Node* n) {
-		std::cout << "GCost:" << n->GetGCost() << " | FCost:" << n->GetFCost() << " | Position:" << n->position << std::endl;
-	}
-	int iterations;//For Debug and checking
 };
 
-class A_Star_Pathfinding_Defined_Segmented {
+class A_Star_Pathfinding_Defined_Segmented : Base_A_Star_Pathfinding {
 public:
 	A_Star_Pathfinding_Defined_Segmented() {};
 	~A_Star_Pathfinding_Defined_Segmented() {
@@ -211,67 +141,18 @@ public:
 	std::set<Node*, ReverseComparator> toSearch;
 	std::set<Node*> searched;
 
-	Node* root;//Start node
-	Node* target;//End node
+	std::vector<Room*> maps;
 
-	std::vector<Room*> maps;//Contains Obstacle locations
-	Room* currentRoom;//Contains Obstacle locations
-
-	int nodeSize;//Allows us to take into account of the size of the agent using this(Assuming position is the center of agent, agent will not go halfway inside a wall.)
-
-	/// <summary>
-	/// Searches a space only defined by obstacles.
-	/// </summary>
-	template <typename T> void FindPath(Vector2<T> startPos, Vector2<T> endPos) {
-		startPos = Vector2<int>(startPos);
-		endPos = Vector2<int>(endPos);
-		
-		FindCurrentMap(startPos);
-		SetUpStartAndEndNodes(startPos, endPos);
-		SearchPath();
-	};
 private:
-	void SearchPath();
-	void SetUpStartAndEndNodes(Vector2<int> startPos, Vector2<int> endPos);
+	void FindCurrentRoom(const Vector2<int> rootPosition) override;
+	void AStarAlgorithm() override;
 
-	bool IsNodeInRoom(const RoomStruct& nm, const Node& n) const; 
-	bool IsNodeInRoom(const RoomStruct& nm, const Vector2<int> position) const; 
-	void FindCurrentMap(const Vector2<int> rootPosition);
-	Node* FindRoute() const;
 	std::stack<RoomStruct*> BruteForcePathfindMaps();
 	std::queue<Node*> FindRouteNodePaths(std::stack<RoomStruct*> mapRoute);
 	//void FindNeighbours(Node* node);
 	//If the maps are supplied like a tree, or something similar that will tell us what Room connect we could optimise the FindRoute method to search only the necessary maps
 	bool DefaultAStar(Node& startNode, Node& endNode);
 	void CheckNeighbours(Node* node, Node& targetNode, std::set<Node*, ReverseComparator> open, std::set<Node*> closed);
-public:
-	void SetMap(Room* nm) {
-		maps.push_back(nm);
-
-		nodeSize = nm->nodeSize;
-	}
-
-	/// <summary>
-/// For Debuggin purposes
-/// </summary>
-	void PrintPath() {
-
-		Node* current = target;
-		std::cout << " It " << iterations << "Times it took" << std::endl;
-
-		while (current->GetParent() != nullptr)
-		{
-			current = current->GetParent();
-			std::cout << current->position << std::endl;
-			std::cout << current->GetGCost() << std::endl;
-		}
-		std::cout << " It " << iterations << "Times it took" << std::endl;
-
-	};
-	void PrintNode(Node* n) {
-		std::cout << "GCost:" << n->GetGCost() << " | FCost:" << n->GetFCost() << " | Position:" << n->position << std::endl;
-	}
-	int iterations;//For Debug and checking
 };
 
 #endif // !A_STAR_PATHFINDING_H
