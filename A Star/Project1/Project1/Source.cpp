@@ -3,14 +3,70 @@
 
 
 int main() {
-    A_Star_Pathfinding_Defined_Segmented path;
+    //A_Star_Pathfinding_Defined path;
+    A_Star_Pathfinding_Undefined path;
     Room nm;
     Room nm1;
+    Room nm2;
+    Room nm3;
 
     CompleteMapRead(nm, "CompleteMap50.txt");
-    CompleteMapRead(nm1, "CompleteMapBound.txt");
-    DisplaceNodeMap(nm, Vector2<int>(0, -1));
-    path.SetMap(&nm);
+    nm.LinkNeighbours(nm);
+    PrintMap(nm.GetXSize(), nm.GetYSize(), nm.nodes);
+    std::cout << "COMPLETE MAP 50 DONE \n \n \n";
+
+    CompleteMapRead(nm1, "CompleteMapBound1.txt");
+    nm1.LinkNeighbours(nm1);
+    DisplaceNodeMap(nm1, Vector2<int>(1, 0));
+    //PrintMap(nm1.GetXSize(), nm1.GetYSize(), nm1.nodes);
+    std::cout << "COMPLETE MAP 50 DONE \n \n \n";
+
+    CompleteMapRead(nm2, "CompleteMapBound2.txt");
+    nm2.LinkNeighbours(nm2);
+    DisplaceNodeMap(nm2, Vector2<int>(1, 1));
+    //PrintMap(nm2.GetXSize(), nm2.GetYSize(), nm2.nodes);
+
+    std::cout << "COMPLETE MAP 50 DONE \n \n \n";
+
+    CompleteMapRead(nm3, "CompleteMapBound3.txt");
+    nm3.LinkNeighbours(nm3);
+    DisplaceNodeMap(nm3, Vector2<int>(0, 1));
+    //PrintMap(nm3.GetXSize(), nm3.GetYSize(), nm3.nodes);
+
+    //All manual for now, if i had time, i'd prefer to make a file system or at least some functions that fully automate this process
+    std::cout << "COMPLETE MAP 50 DONE \n \n \n";
+    path.rooms.push_back(&nm); path.rooms.push_back(&nm1); path.rooms.push_back(&nm2); path.rooms.push_back(&nm3);
+    nm.AddNeighbouringRoom(&nm1);
+
+    nm1.AddNeighbouringRoom(&nm2);
+    nm1.AddNeighbouringRoom(&nm);
+
+    nm2.AddNeighbouringRoom(&nm1);
+    nm2.AddNeighbouringRoom(&nm3);
+
+    //WTF IS HAPPENING WITH THE ROUTE NODES?
+    nm3.AddNeighbouringRoom(&nm2);
+    Node* a = nm.GetRouteNodes()[0]; Node* b = nm1.GetRouteNodes()[0];
+    nm.DualLinkRouteNodes(*a, *b, EAST);
+    a = nm.GetRouteNodes()[1]; b = nm1.GetRouteNodes()[1];
+    nm.DualLinkRouteNodes(*a, *b, EAST);
+
+    a = nm1.GetRouteNodes()[2]; b = nm2.GetRouteNodes()[3];
+    nm.DualLinkRouteNodes(*a, *b, SOUTH);
+
+    a = nm2.GetRouteNodes()[0]; b = nm3.GetRouteNodes()[2];
+    nm.DualLinkRouteNodes(*a, *b, WEST);
+
+    path.SetCurrentRoom(&nm);
+    //path.SetCurrentRoom(&nm);
+    //path.FindPath(Vector2<int>(200, 100), Vector2<int>(200, 500)); Works for all
+    //path.FindPath(Vector2<int>(200, 100), Vector2<int>(1600, 1500)); //works for seg, works for def, works for undef
+    //path.FindPath(Vector2<int>(200, 100), Vector2<int>(1050, 1500)); //Seg not best path i think, works for def, works for undef
+    //path.FindPath(Vector2<int>(200, 100), Vector2<int>(1100, 3500)); //Seg works, does not work for def, does not work for undef
+    
+    path.PrintPath();
+    //path.PrintRoute();
+    //path.PrintRoute();
 
     return 0;
 }

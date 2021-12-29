@@ -2,8 +2,8 @@
 //////////Vector 2 files
 //////////Written by Tanapat Somrid 
 /////////Starting 01/12/2021
-//////// Most Recent Update 15/12/2021
-//////// Most Recent change: The comparison overload operators have been tested
+//////// Most Recent Update 29/12/2021
+//////// Most Recent change: The += -= operators have been fixed, added a normalise function, added a division by int operator overload
 
 #pragma once
 #ifndef VECTOR2_H
@@ -47,6 +47,12 @@ public:
 	}
 	static T Magnitude(const Vector2<T>& vector) {
 		return (T)(sqrt(abs(vector.x * vector.x) + abs(vector.y * vector.y)));
+	}
+	void Normalise() {
+		*this = *this / this->Magnitude();
+	}
+	Vector2<T> Normalize() {
+		return Vector2<T>(*this / this->Magnitude());
 	}
 	/// <summary>
 /// The EUCLIDEAN distance from this vector and the given coordinates (x and y)
@@ -104,37 +110,56 @@ template <typename T> Vector2<T> operator -(const Vector2<T>& lhs, const Vector2
 }
 
 /// <summary>
-/// Untested
+/// This works
 /// </summary>
 /// <typeparam name="T"></typeparam>
 /// <param name="lhs"></param>
 /// <param name="rhs"></param>
 /// <returns></returns>
-template <typename T> Vector2<T>& operator +=(const Vector2<T>& lhs, const Vector2<T>& rhs) {
+template <typename T> Vector2<T> operator /(const Vector2<T>& lhs, const T& rhs) {
+	return Vector2<T>((lhs.x / rhs), (lhs.y / rhs));
+}
+/// <summary>
+/// This works
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="lhs"></param>
+/// <param name="rhs"></param>
+/// <returns></returns>
+template <typename T> void operator +=(Vector2<T>& lhs, const Vector2<T>& rhs) {
 	//lhs.x = lhs.x + rhs.x;
 	//lhs.y = lhs.y + rhs.y;
 	//return *lhs;
-	Vector2<T> newVector;
-	newVector.x = lhs.x + rhs.x;
-	newVector.y = lhs.y + rhs.y;
-	return newVector;
+	lhs.x = lhs.x + rhs.x;
+	lhs.y = lhs.y + rhs.y;
+	return;
 }
 
 /// <summary>
-/// Untested
+/// This Works
 /// </summary>
 /// <typeparam name="T"></typeparam>
 /// <param name="lhs"></param>
 /// <param name="rhs"></param>
 /// <returns></returns>
-template <typename T> Vector2<T>& operator -=(const Vector2<T>& lhs, const Vector2<T>& rhs) {
+template <typename T> void operator -=(Vector2<T>& lhs, const Vector2<T>& rhs) {
 	//lhs.x = lhs.x - rhs.x;
 	//lhs.y = lhs.y - rhs.y;
 	//return *lhs;
-	Vector2<T> newVector;
-	newVector.x = lhs.x - rhs.x;
-	newVector.y = lhs.y - rhs.y;
-	return newVector;
+	lhs.x = lhs.x - rhs.x;
+	lhs.y = lhs.y - rhs.y;
+	return;
+}
+/// <summary>
+/// untested
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="lhs"></param>
+/// <param name="rhs"></param>
+template <typename T> void operator /=(const Vector2<T>& lhs, const T& rhs) {
+	lhs.x = lhs.x / rhs.x;
+	lhs.y = lhs.y / rhs.y;
+	return;
 }
 /// <summary>
 /// Untested

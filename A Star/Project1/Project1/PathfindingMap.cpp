@@ -1,12 +1,35 @@
 #include "PathfindingMap.h"
 
+int OppositeDirection(Direction n) {
+	switch (n)
+	{
+	case NORTH:
+		return SOUTH;
+	case EAST:
+		return WEST;
+	case SOUTH:
+		return NORTH;
+	case WEST:
+		return EAST;
+	case NORTHWEST:
+		return SOUTHEAST;
+	case NORTHEAST:
+		return SOUTHWEST;
+	case SOUTHEAST:
+		return NORTHWEST;
+	case SOUTHWEST:
+		return NORTHEAST;
+	default:
+		break;
+	}
+}
 void Room::LinkNeighbours(Room& nm)
 {
 	int xBound = xSize - 1; int yBound = ySize - 1;
 	//Links entire grid except for the edges
-	for (int y = 1; y < yBound - 1; y++)
+	for (int y = 1; y < yBound; y++)
 	{
-		for (int x = 1; x < xBound - 1; x++)
+		for (int x = 1; x < xBound; x++)
 		{
 			nodes[x][y].neighbours[0] = &nodes[x][y - 1];
 			nodes[x][y].neighbours[1] = &nodes[x + 1][y];
@@ -20,7 +43,7 @@ void Room::LinkNeighbours(Room& nm)
 	}
 #pragma region BOUNDS
 	//Ceiling and floor
-	for (int x = 1; x < xBound - 1; x++)
+	for (int x = 1; x < xBound; x++)
 	{
 		//When y = 0, there should never be a -1 in y
 		nodes[x][0].neighbours[0] = nullptr;
@@ -41,9 +64,12 @@ void Room::LinkNeighbours(Room& nm)
 		nodes[x][yBound].neighbours[5] = &nodes[x + 1][yBound - 1];
 		nodes[x][yBound].neighbours[6] = nullptr;
 		nodes[x][yBound].neighbours[7] = nullptr;
+
+
 	}
+
 	//Walls
-	for (int y = 1; y < yBound - 1; y++)
+	for (int y = 1; y < yBound; y++)
 	{
 		//When x = 0, there should never be a -1 in x
 		nodes[0][y].neighbours[0] = &nodes[0][y - 1];
@@ -149,6 +175,32 @@ void Room::LinkNeighbours(Room& nm)
 
 void Room::LinkRouteNodes(Node& node1, Node& node2)
 {
+	//Just calculates the direction
 	Vector2<int> direction = node1.position - node2.position;
+	direction.Normalise();
+	int lowest = 10;
+	int toReplace;
+	for (int i = 0; i < 8; i++ )
+	{
+		int directionWeight = (direction - node1.neighbours[i]->position.Normalize()).Magnitude();
+		if (directionWeight < lowest)
+		{
+			lowest = directionWeight;
+			toReplace = i;
+		}
+	}
+	node1.neighbours[toReplace] = &node2;
 
+}
+
+void Room::LinkRouteNodes(Node& node1, Node& node2, int neighbourNode1)
+{
+	node1.neighbours[neighbourNode1] = &node2;
+}
+
+void Room::DualLinkRouteNodes(Node& node1, Node& node2, int neighbourNode1)
+{
+	node1.neighbours[neighbourNode1] = &node2;
+	node2.neighbours[OppositeDirection(Direction(neighbourNode1))] = &node1;
+	
 }

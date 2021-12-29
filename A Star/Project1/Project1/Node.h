@@ -2,8 +2,8 @@
 //////////Node Map files
 //////////Written by Tanapat Somrid 
 /////////Starting 08/12/2021
-//////// Most Recent Update 18/12/2021
-//////// Most Recent change: Changed from NodeMap.h to Node.h, compartmentalising the different classes in different files.
+//////// Most Recent Update 29/12/2021
+//////// Most Recent change: Added a direction enum for future ease, when initialising nodes - parent gets set to nullptr
 
 
 #pragma once
@@ -22,6 +22,17 @@ enum NodeType
 	Routes = 2,
 };
 
+enum Direction {
+	NORTH = 0,
+	EAST = 1,
+	SOUTH = 2,
+	WEST = 3,
+	NORTHWEST = 4,
+	NORTHEAST = 5,
+	SOUTHEAST = 6,
+	SOUTHWEST = 7,
+};
+
 
 
 /// <summary>
@@ -35,7 +46,7 @@ public:
 /// Constructor For Start and End Nodes
 /// </summary>
 	Node() {
-		gCost = 0; nodeType = Free;
+		gCost = 0; nodeType = Free; parentNode = nullptr;
 	}
 	/// <summary>
 	/// Constructor for new Nodes
@@ -43,10 +54,12 @@ public:
 	Node(const Vector2<int>& newPosition) {
 		nodeType = Free;
 		position = newPosition;
+		parentNode = nullptr;
 	}
 	Node(int x, int y) {
 		nodeType = Free;
 		position.x = x; position.y = y;
+		parentNode = nullptr;
 	}
 
 	//Copy Constructors
@@ -192,9 +205,5 @@ private:
 	void Generate4Neighbours(int nodeSize);
 
 };
-
-
-
-
 
 #endif // !NODEMAP_H

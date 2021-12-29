@@ -2,8 +2,8 @@
 //////////A Star Pathfing files // PathfindingMap.h required
 //////////Written by Tanapat Somrid 
 /////////Starting 01/12/2021
-//////// Most Recent Update 18/12/2021
-//////// Most Recent change: Changing structure of files and classes
+//////// Most Recent Update 29/12/2021
+//////// Most Recent change: FIXED A LOT OF EVERYTHING, currently not everyhting works, you can see the use cases in source.cpp
 
 
 #pragma once
@@ -30,14 +30,27 @@ public:
 	}
 };
 /// <summary>
-/// 
+/// Checks the smallest fcost, smallest h cost
 /// </summary>
-struct PositionComparator {
+struct PriorityComparator {
 public:
 	bool operator ()(const Node* a, const Node* b) const {
-		return (a->position < b->position);
+		if (a->GetFCost() == b->GetFCost())
+		{
+			return a->GetHCost() < b->GetHCost();
+		}
+		return (a->GetFCost() > b->GetFCost());
 	}
 };
+/// <summary>
+/// 
+/// </summary>
+//struct PositionComparator {
+//public:
+//	bool operator ()(const Node* a, const Node* b) const {
+//		return (a->position < b->position);
+//	}
+//};
 //struct classcomp {
 //	bool operator() (const int& lhs, const int& rhs) const
 //	{
@@ -54,20 +67,27 @@ public:
 
 	int iterations;//For Debug and checking
 
+	std::vector<Room*> rooms;
+
+
 	#pragma region MANDATORY_BASE_FUNCTIONS
 	template <typename T> void FindPath(Vector2<T> startPos, Vector2<T> endPos) {
 		startPos = Vector2<int>(startPos);
 		endPos = Vector2<int>(endPos);
 
-		FindCurrentMap(startPos);
+		FindCurrentRoom(startPos);
 		SetUpStartAndEndNodes(startPos, endPos);
-		SearchPath();
+		AStarAlgorithm();
 	};
+
+private:
 	virtual void FindCurrentRoom(const Vector2<int> rootPosition) { if (!Base_A_Star_Pathfinding::IsNodeInRoom(*currentRoom, rootPosition)) { return; } std::cout << "Room ok! \n"; };
 	virtual void SetUpStartAndEndNodes(Vector2<int> startPos, Vector2<int> endPos);
 	virtual void AStarAlgorithm() = 0;
-	#pragma endregion
+	Node* FindNodeInRoom(Vector2<int> pos, Room* rm);
 
+	#pragma endregion
+public:
 	#pragma region HELPER_FUNCTIONS
 	static bool IsNodeInRoom(const RoomStruct& nm, const Node& n);
 	static bool IsNodeInRoom(const RoomStruct& nm, const Vector2<int> position);
@@ -93,8 +113,9 @@ public:
 	void PrintNode(Node* n) {
 		std::cout << "GCost:" << n->GetGCost() << " | FCost:" << n->GetFCost() << " | Position:" << n->position << std::endl;
 	}
+	void PrintRoute();
 
-	void SetCurrentMap(Room* nm) {
+	void SetCurrentRoom(Room* nm) {
 		currentRoom = nm;
 		nodeSize = nm->GetNodeSize();
 	}
@@ -108,10 +129,10 @@ protected:
 /// ,however this has to be done because we don't keep unique nodes, this way we don't need to needlessly search open and closed nodes that are no where near our path.</para>
 /// <para>Theory: This version would work best with straighforward paths, and very far away targets. The target moving does not hold much difference, as no matter what version, a moving target will always be costly. The more complex the path, the worse it will get, I predict it will be the worst of all if there is complex obstacles as we will be making multiple paths, possibly hundreds</para>
 /// </summary>
-class A_Star_Pathfinding_Undefined : Base_A_Star_Pathfinding
+class A_Star_Pathfinding_Undefined : public Base_A_Star_Pathfinding
 {
 public:
-	std::priority_queue<Node*, std::vector<Node*>, ReverseComparator> toSearch;
+	std::priority_queue<Node*, std::vector<Node*>, PriorityComparator> toSearch;
 
 private:
 	void AStarAlgorithm() override;
@@ -119,7 +140,7 @@ private:
 	void CheckNeighbours(Node* node);
 };
 
-class A_Star_Pathfinding_Defined : Base_A_Star_Pathfinding {
+class A_Star_Pathfinding_Defined : public Base_A_Star_Pathfinding {
 public:
 	A_Star_Pathfinding_Defined() {};
 	~A_Star_Pathfinding_Defined() {
@@ -133,7 +154,7 @@ private:
 	//void FindNeighbours(Node* node);
 };
 
-class A_Star_Pathfinding_Defined_Segmented : Base_A_Star_Pathfinding {
+class A_Star_Pathfinding_Defined_Segmented : public Base_A_Star_Pathfinding {
 public:
 	A_Star_Pathfinding_Defined_Segmented() {};
 	~A_Star_Pathfinding_Defined_Segmented() {
@@ -141,7 +162,6 @@ public:
 	std::set<Node*, ReverseComparator> toSearch;
 	std::set<Node*> searched;
 
-	std::vector<Room*> maps;
 
 private:
 	void FindCurrentRoom(const Vector2<int> rootPosition) override;
@@ -152,7 +172,8 @@ private:
 	//void FindNeighbours(Node* node);
 	//If the maps are supplied like a tree, or something similar that will tell us what Room connect we could optimise the FindRoute method to search only the necessary maps
 	bool DefaultAStar(Node& startNode, Node& endNode);
-	void CheckNeighbours(Node* node, Node& targetNode, std::set<Node*, ReverseComparator> open, std::set<Node*> closed);
+	void CheckNeighbours(Node* node, Node& targetNode, std::set<Node*, ReverseComparator>& open, std::set<Node*>& closed);
+	Node* FindRouteNode(std::stack<RoomStruct*>& mapRoute);
 };
 
 #endif // !A_STAR_PATHFINDING_H

@@ -1,9 +1,18 @@
+//////////
+//////////CustomLoader file
+//////////Written by Tanapat Somrid 
+/////////Starting 08/12/2021
+//////// Most Recent Update 29/12/2021
+//////// Most Recent change: Fixed Displacement, seperated print map and the map read
+
+#ifndef CUSTOMLOADER_H
+#define CUSTOMLOADER_H
+
 #pragma once
 #include "A_Star_Pathfinding.h"
 #include <fstream>
 #include <iostream>
 #include <string>
-
 void CollisionMapRead(Room& nm) {
     //std::ofstream collisionMap;//
     std::ifstream collisionMap;
@@ -33,6 +42,48 @@ void CollisionMapRead(Room& nm) {
     }
     nm.SetObstacleLocations(obstacleLocations);
 }
+void PrintMap(const int& xSize, const int& ySize, Node** f) {
+    bool newLine = false;
+    for (int y = 0; y < ySize; y++)
+    {
+        for (int x = 0; x < xSize; x++)
+        {
+            if (f[x][y].position == Vector2<int>(1950, 1400))
+            {
+                std::cout << "D";
+            }
+            if (newLine)
+            {
+                std::cout << '\n';
+                std::cout << f[x][y].nodeType << " | ";
+                newLine = false;
+            }
+            else {
+                std::cout << f[x][y].nodeType << " | ";
+            }
+        }
+        newLine = true;
+
+    }
+    newLine = false;
+    for (int y = 0; y < ySize; y++)
+    {
+        for (int x = 0; x < xSize; x++)
+        {
+            if (newLine)
+            {
+                std::cout << '\n';
+                std::cout << f[x][y].position.x << "," << f[x][y].position.y << "|";
+                newLine = false;
+            }
+            else {
+                std::cout << f[x][y].position.x << "," << f[x][y].position.y << "|";
+            }
+        }
+        newLine = true;
+
+    }
+}
 void CompleteMapRead(Room& nm, std::string fileName) {
     //std::ofstream collisionMap;//
     std::ifstream collisionMap;
@@ -47,6 +98,9 @@ void CompleteMapRead(Room& nm, std::string fileName) {
         }
         txtInfo[0].replace(txtInfo[0].find("NodeSize:"), txtInfo[0].find_last_of("NodeSize:") + 1, "");
     }
+    else {
+        return;
+    }
 
     int xSize = std::stoi(txtInfo[1]);
     int ySize = std::stoi(txtInfo[2]);
@@ -58,8 +112,8 @@ void CompleteMapRead(Room& nm, std::string fileName) {
     }
 
     std::vector<Vector2<int>> obstacleLocations;
-    Vector2<int> lowest = Vector2<int>(9999, 9999), highest = Vector2<int>(-9999, -9999);
-    std::set<Node*> routes;
+    Vector2<int> lowest = Vector2<int>(9999, 9999), highest = Vector2<int>(0, 0);
+    std::vector<Node*> routes;
     for (int i = 3; i < txtInfo.size(); i++)
     {
         int xStart = 0;
@@ -79,7 +133,13 @@ void CompleteMapRead(Room& nm, std::string fileName) {
         f[x][y].nodeType = NodeType((Free + (typeOfNode == 'O') + ((typeOfNode == 'R') * 2)));
         if (f[x][y].nodeType == Routes)
         {
-            routes.insert(&f[x][y]);
+            Vector2<int> pos;
+            pos = f[x][y].position;
+            pos = pos;
+        }
+        if (f[x][y].nodeType == Routes)
+        {
+            routes.push_back(&f[x][y]);
         }
         for (int n = 0; n < 8; n++)
         {
@@ -95,27 +155,18 @@ void CompleteMapRead(Room& nm, std::string fileName) {
             highest = coord;
         }
     }
-    bool newLine = false;
+    //PrintMap(xSize, ySize, f);
     for (int x = 0; x < xSize; x++)
     {
         for (int y = 0; y < ySize; y++)
         {
-            if (newLine)
-            {
-                std::cout << f[x][y].nodeType << std::endl;
-                newLine = false;
-            }
-            else {
-                std::cout << f[x][y].nodeType << " | ";
-            }
             if (f[x][y].nodeType == Obstacle)
             {
                 obstacleLocations.push_back(f[x][y].position);
             }
         }
-        newLine = true;
-
     }
+
     nm.SetNodeSize(std::stoi(txtInfo[0]));
     nm.SetObstacleLocations(obstacleLocations);
     std::cout << std::endl;
@@ -129,11 +180,20 @@ void CompleteMapRead(Room& nm, std::string fileName) {
 }
 
 void DisplaceNodeMap(Room& nm, Vector2<int> direction) {
-    for (int x = 0; x < nm.GetXSize() - 1; x++)
+    std::vector<Vector2<int>> newObstacle;
+    Vector2<int> displacementAmount = Vector2<int>(direction.x * (nm.GetHighestCoord().x + nm.GetNodeSize()), direction.y * (nm.GetHighestCoord().y + nm.GetNodeSize()));
+    for (int x = 0; x < nm.GetXSize(); x++)
     {
-        for (int y = 0; y < nm.GetYSize() - 1; y++)
+        for (int y = 0; y < nm.GetYSize(); y++)
         {
-            nm.nodes[x][y].position += Vector2<int>(direction.x * nm.GetHighestCoord().x, direction.y * nm.GetHighestCoord().y);
+            nm.nodes[x][y].position += displacementAmount;
         }
     }
+    for (int i = 0; i < nm.obstacleLocations.size(); i++)
+    {
+        nm.obstacleLocations[i] += displacementAmount;
+    }
+    nm.SetLowestCoord(nm.GetLowestCoord() + displacementAmount);
+    nm.SetHighestCoord(nm.GetHighestCoord() + displacementAmount);
 }
+#endif // !CUSTOMLOADER_H
