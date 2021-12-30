@@ -118,7 +118,7 @@ void A_Star_Pathfinding_Undefined::AStarAlgorithm()
 
 	iterations = 0;
 	//Considering it is an undefined map, there is an unlikely chance that we could ever have a size of zero
-	while (toSearch.size() != 0 && iterations != 1000)
+	while (toSearch.size() != 0 && iterations != 10000)
 	{
 
 		//Find lowest fCost Open Node
@@ -131,7 +131,6 @@ void A_Star_Pathfinding_Undefined::AStarAlgorithm()
 			target->SetParent(current);
 			return;
 		}
-
 		//Restructure the node collections
 		toSearch.pop();
 
@@ -165,6 +164,16 @@ void A_Star_Pathfinding_Undefined::CheckNeighbours(Node* current)
 		{
 			continue;
 		}
+		if (!IsNodeInRoom(*currentRoom,neighbour->position))
+		{
+			for (auto rm : rooms)
+			{
+				if (IsNodeInRoom(*rm, neighbour->position))
+				{
+					currentRoom = rm;
+				}
+			}
+		}
 		neighbour->CalculateNodeType(currentRoom->GetObstacleLocations(), nodeSize);
 		//If node is an obstacle add it to closed and continue
 		if (neighbour->nodeType == Obstacle)
@@ -196,14 +205,17 @@ void A_Star_Pathfinding_Undefined::CheckNeighbours(Node* current)
 void A_Star_Pathfinding_Defined::AStarAlgorithm()
 {
 	openSet.insert(root);
+	std::vector<Vector2<int>> pos;
 
 	iterations = 0;
-	//Considering it is an undefined map, there is an unlikely chance that we could ever have a size of zero
+
 	while (openSet.size() != 0 && iterations <= 100000)
 	{
 
 		//Find lowest fCost Open Node
 		Node* current = *openSet.begin();
+		Vector2<int> cPos = current->position;
+		pos.push_back(current->position);
 
 		//If we found end, stop pathfinding
 		int o = current->DistanceFromM(target->position);//debugging
@@ -212,8 +224,9 @@ void A_Star_Pathfinding_Defined::AStarAlgorithm()
 			return;
 		}
 
+		std::set<Node*>::iterator it = openSet.begin();//For some reason, it won't erase some points, so we need to point to the first one to erase instead of erasing the specific node
 		//Restructure the node collections
-		openSet.erase(current);
+		openSet.erase(it);
 		closedSet.insert(current);
 
 		//Neighbours
@@ -306,12 +319,10 @@ void A_Star_Pathfinding_Defined_Segmented::AStarAlgorithm()
 	//Search normally towards the target node
 	if (DefaultAStar(*current, *target))
 	{
-		PrintPath();
-		PrintRoute();
 		return;
-		//Retrace path
+		
 	}
-	return;
+	return;//Failed
 }
 
 std::stack<RoomStruct*> A_Star_Pathfinding_Defined_Segmented::BruteForcePathfindMaps()

@@ -166,6 +166,7 @@ void CompleteMapRead(Room& nm, std::string fileName) {
             }
         }
     }
+    std::cout << "Total size : " << xSize * ySize << std::endl;
 
     nm.SetNodeSize(std::stoi(txtInfo[0]));
     nm.SetObstacleLocations(obstacleLocations);

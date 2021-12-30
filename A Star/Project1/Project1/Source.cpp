@@ -4,7 +4,8 @@
 
 int main() {
     //A_Star_Pathfinding_Defined path;
-    A_Star_Pathfinding_Undefined path;
+    //A_Star_Pathfinding_Undefined path;
+    A_Star_Pathfinding_Defined_Segmented path;
     Room nm;
     Room nm1;
     Room nm2;
@@ -12,7 +13,7 @@ int main() {
 
     CompleteMapRead(nm, "CompleteMap50.txt");
     nm.LinkNeighbours(nm);
-    PrintMap(nm.GetXSize(), nm.GetYSize(), nm.nodes);
+    //PrintMap(nm.GetXSize(), nm.GetYSize(), nm.nodes);
     std::cout << "COMPLETE MAP 50 DONE \n \n \n";
 
     CompleteMapRead(nm1, "CompleteMapBound1.txt");
@@ -60,9 +61,10 @@ int main() {
     path.SetCurrentRoom(&nm);
     //path.SetCurrentRoom(&nm);
     //path.FindPath(Vector2<int>(200, 100), Vector2<int>(200, 500)); Works for all
-    //path.FindPath(Vector2<int>(200, 100), Vector2<int>(1600, 1500)); //works for seg, works for def, works for undef
-    //path.FindPath(Vector2<int>(200, 100), Vector2<int>(1050, 1500)); //Seg not best path i think, works for def, works for undef
-    //path.FindPath(Vector2<int>(200, 100), Vector2<int>(1100, 3500)); //Seg works, does not work for def, does not work for undef
+    //path.FindPath(Vector2<int>(200, 100), Vector2<int>(1600, 1500)); //works for all
+    //path.FindPath(Vector2<int>(200, 100), Vector2<int>(1050, 1500)); //works for all
+    path.FindPath(Vector2<int>(200, 100), Vector2<int>(3100, 1550)); //works for all
+    //path.FindPath(Vector2<int>(200, 100), Vector2<int>(1100, 3500)); //Seg works, works for def, does not work for undef
     
     path.PrintPath();
     //path.PrintRoute();

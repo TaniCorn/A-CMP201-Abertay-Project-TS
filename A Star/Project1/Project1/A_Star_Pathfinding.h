@@ -138,6 +138,7 @@ private:
 	void AStarAlgorithm() override;
 	void SetUpStartAndEndNodes(Vector2<int> startPos, Vector2<int> endPos) override;
 	void CheckNeighbours(Node* node);
+	void NewRoom();
 };
 
 class A_Star_Pathfinding_Defined : public Base_A_Star_Pathfinding {
@@ -145,7 +146,7 @@ public:
 	A_Star_Pathfinding_Defined() {};
 	~A_Star_Pathfinding_Defined() {
 	};
-	std::set<Node*, ReverseComparator> openSet;
+	std::set<Node*> openSet;
 	std::set<Node*> closedSet;
 
 private:

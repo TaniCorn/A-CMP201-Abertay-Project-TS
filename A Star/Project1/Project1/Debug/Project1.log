@@ -7,9 +7,9 @@ C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A St
 C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Node.h(171,10): warning C4244: 'return': conversion from 'const float' to 'int', possible loss of data
 C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Node.h(179,11): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
 C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Node.h(182,10): warning C4244: 'return': conversion from 'const float' to 'int', possible loss of data
-C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\CustomLoader.h(27,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\CustomLoader.h(111,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\CustomLoader.h(186,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\CustomLoader.h(33,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\CustomLoader.h(117,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\CustomLoader.h(193,23): warning C4018: '<': signed/unsigned mismatch
 C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\VectorPositions.h(80,10): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
 C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\VectorPositions.h(78): message : while compiling class template member function 'int Vector2<int>::DistanceBetween(const Vector2<int> &,const Vector2<int> &)'
 C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Node.h(99): message : see reference to function template instantiation 'int Vector2<int>::DistanceBetween(const Vector2<int> &,const Vector2<int> &)' being compiled
