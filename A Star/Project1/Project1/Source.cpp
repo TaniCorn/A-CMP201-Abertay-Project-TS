@@ -1,11 +1,13 @@
 
 #include "CustomLoader.h"
 
-
+//TODO: There is currently no memory management, assume only one run is allowed
 int main() {
     //A_Star_Pathfinding_Defined path;
     //A_Star_Pathfinding_Undefined path;
     A_Star_Pathfinding_Defined_Segmented path;
+
+#pragma region ROOMS
     Room nm;
     Room nm1;
     Room nm2;
@@ -33,8 +35,10 @@ int main() {
     nm3.LinkNeighbours(nm3);
     DisplaceNodeMap(nm3, Vector2<int>(0, 1));
     //PrintMap(nm3.GetXSize(), nm3.GetYSize(), nm3.nodes);
+#pragma endregion
 
-    //All manual for now, if i had time, i'd prefer to make a file system or at least some functions that fully automate this process
+#pragma region MANUAL_NEIGHBOUR_LINKING
+        //All manual for now, if i had time, i'd prefer to make a file system or at least some functions that fully automate this process
     std::cout << "COMPLETE MAP 50 DONE \n \n \n";
     path.rooms.push_back(&nm); path.rooms.push_back(&nm1); path.rooms.push_back(&nm2); path.rooms.push_back(&nm3);
     nm.AddNeighbouringRoom(&nm1);
@@ -59,6 +63,9 @@ int main() {
     nm.DualLinkRouteNodes(*a, *b, WEST);
 
     path.SetCurrentRoom(&nm);
+#pragma endregion
+
+
     //path.SetCurrentRoom(&nm);
     //path.FindPath(Vector2<int>(200, 100), Vector2<int>(200, 500)); Works for all
     //path.FindPath(Vector2<int>(200, 100), Vector2<int>(1600, 1500)); //works for all
@@ -66,7 +73,7 @@ int main() {
     path.FindPath(Vector2<int>(200, 100), Vector2<int>(3100, 1550)); //works for all
     //path.FindPath(Vector2<int>(200, 100), Vector2<int>(1100, 3500)); //Seg works, works for def, does not work for undef
     
-    path.PrintPath();
+    //path.PrintPath();
     //path.PrintRoute();
     //path.PrintRoute();
 

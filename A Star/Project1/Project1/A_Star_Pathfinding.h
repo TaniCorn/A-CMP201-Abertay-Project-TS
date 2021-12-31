@@ -2,8 +2,13 @@
 //////////A Star Pathfing files // PathfindingMap.h required
 //////////Written by Tanapat Somrid 
 /////////Starting 01/12/2021
-//////// Most Recent Update 29/12/2021
-//////// Most Recent change: FIXED A LOT OF EVERYTHING, currently not everyhting works, you can see the use cases in source.cpp
+//////// Most Recent Update 30/12/2021
+//////// Most Recent change: Cleanup and commenting
+//////// TODO: Get a lot of error checking and catch cases where the path cannot be found. Currently the algorithms mostly assume it's possible. Make undefined have more directions
+//////// TODO: Ideally, for actual use, the algorithm won't update continually only when(player has moved to a different room, player has moved position in same room);
+
+//This has been done while thinking of using it for a 2d game utilising square rooms where enemies can spawn. 
+//This was inspired by my own project last year for CMP105, and as such some of the terminology/comments may refer to that instead of a general term, afterall this has been designed around that use case.
 
 
 #pragma once
@@ -15,13 +20,16 @@
 #include <queue>
 #include "PathfindingMap.h"
 
+//For some reason the priority queue and node have different ways of comparing so I have to use two different comparator
+
+#pragma region COMPARATOR
 
 /// <summary>
 /// Checks the smallest fcost, smallest h cost
 /// </summary>
 struct ReverseComparator {
 public:
-	bool operator ()(const Node* a, const Node* b) const{
+	bool operator ()(const Node* a, const Node* b) const {
 		if (a->GetFCost() == b->GetFCost())
 		{
 			return a->GetHCost() > b->GetHCost();
@@ -42,22 +50,12 @@ public:
 		return (a->GetFCost() > b->GetFCost());
 	}
 };
-/// <summary>
-/// 
-/// </summary>
-//struct PositionComparator {
-//public:
-//	bool operator ()(const Node* a, const Node* b) const {
-//		return (a->position < b->position);
-//	}
-//};
-//struct classcomp {
-//	bool operator() (const int& lhs, const int& rhs) const
-//	{
-//		return lhs < rhs;
-//	}
-//};
 
+#pragma endregion
+
+/// <summary>
+/// Base A Star Class, provides base functionality, virtual functions and helper functions. Also provides limited member variables
+/// </summary>
 class Base_A_Star_Pathfinding {
 public:
 	Node* root;//Start node
@@ -67,10 +65,21 @@ public:
 
 	int iterations;//For Debug and checking
 
-	std::vector<Room*> rooms;
+	std::vector<Room*> rooms;//Rooms we're allowed to traverse
 
 
 	#pragma region MANDATORY_BASE_FUNCTIONS
+	void SetCurrentRoom(Room* nm) {
+		currentRoom = nm;
+		nodeSize = nm->GetNodeSize();
+	}
+
+	/// <summary>
+	/// Find a path using the position of self and target
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="startPos"></param>
+	/// <param name="endPos"></param>
 	template <typename T> void FindPath(Vector2<T> startPos, Vector2<T> endPos) {
 		startPos = Vector2<int>(startPos);
 		endPos = Vector2<int>(endPos);
@@ -80,10 +89,29 @@ public:
 		AStarAlgorithm();
 	};
 
-private:
+protected:
+	/// <summary>
+	/// Is Node in current room//TODO: Fix function or fix name
+	/// </summary>
+	/// <param name="rootPosition"></param>
 	virtual void FindCurrentRoom(const Vector2<int> rootPosition) { if (!Base_A_Star_Pathfinding::IsNodeInRoom(*currentRoom, rootPosition)) { return; } std::cout << "Room ok! \n"; };
+	/// <summary>
+	/// Translates the positions to the node format, and assigns each position their node.
+	/// </summary>
+	/// <param name="startPos"></param>
+	/// <param name="endPos"></param>
 	virtual void SetUpStartAndEndNodes(Vector2<int> startPos, Vector2<int> endPos);
+	/// <summary>
+	/// A star algorithm
+	/// </summary>
 	virtual void AStarAlgorithm() = 0;
+private:
+	/// <summary>
+	/// Helper function for SetUpStartAndEndNodes()
+	/// </summary>
+	/// <param name="pos"></param>
+	/// <param name="rm"></param>
+	/// <returns></returns>
 	Node* FindNodeInRoom(Vector2<int> pos, Room* rm);
 
 	#pragma endregion
@@ -94,8 +122,7 @@ public:
 	#pragma endregion
 
 
-
-			/// <summary>
+	/// <summary>
 	/// For Debuggin purposes
 	/// </summary>
 	void PrintPath() {
@@ -114,13 +141,6 @@ public:
 		std::cout << "GCost:" << n->GetGCost() << " | FCost:" << n->GetFCost() << " | Position:" << n->position << std::endl;
 	}
 	void PrintRoute();
-
-	void SetCurrentRoom(Room* nm) {
-		currentRoom = nm;
-		nodeSize = nm->GetNodeSize();
-	}
-protected:
-
 };
 
 /// <summary>
@@ -138,9 +158,12 @@ private:
 	void AStarAlgorithm() override;
 	void SetUpStartAndEndNodes(Vector2<int> startPos, Vector2<int> endPos) override;
 	void CheckNeighbours(Node* node);
-	void NewRoom();
+
 };
 
+/// <summary>
+/// As normal as A star gets, this is the normal version that most taught a star versions use.
+/// </summary>
 class A_Star_Pathfinding_Defined : public Base_A_Star_Pathfinding {
 public:
 	A_Star_Pathfinding_Defined() {};
@@ -152,28 +175,58 @@ public:
 private:
 	void AStarAlgorithm() override;
 	void CheckNeighbours(Node* node);
-	//void FindNeighbours(Node* node);
 };
 
+//Todo: The segmented functions provide a much better base and maybe should be used instead?
+
+/// <summary>
+/// Optimises room functionality, when there are many obstacles to go through and the path may be more obscure than thought.
+/// </summary>
 class A_Star_Pathfinding_Defined_Segmented : public Base_A_Star_Pathfinding {
 public:
 	A_Star_Pathfinding_Defined_Segmented() {};
 	~A_Star_Pathfinding_Defined_Segmented() {
 	};
+
 	std::set<Node*, ReverseComparator> toSearch;
 	std::set<Node*> searched;
 
 
 private:
+	/// <summary>
+	/// Searches all rooms to find our current room based on our position //Move to base?
+	/// </summary>
+	/// <param name="rootPosition"></param>
 	void FindCurrentRoom(const Vector2<int> rootPosition) override;
 	void AStarAlgorithm() override;
 
+	/// <summary>
+	/// Searches through the rooms to find a path towards the target in room format
+	/// </summary>
+	/// <returns></returns>
 	std::stack<RoomStruct*> BruteForcePathfindMaps();
+	/// <summary>
+	/// Find the path for the route nodes connecting the rooms from the BruteForcePathfindMaps function
+	/// </summary>
+	/// <param name="mapRoute"></param>
+	/// <returns></returns>
 	std::queue<Node*> FindRouteNodePaths(std::stack<RoomStruct*> mapRoute);
-	//void FindNeighbours(Node* node);
-	//If the maps are supplied like a tree, or something similar that will tell us what Room connect we could optimise the FindRoute method to search only the necessary maps
+
+	/// <summary>
+	/// Default a star to pathfind basic routes.
+	/// </summary>
+	/// <param name="startNode"></param>
+	/// <param name="endNode"></param>
+	/// <returns></returns>
 	bool DefaultAStar(Node& startNode, Node& endNode);
+
 	void CheckNeighbours(Node* node, Node& targetNode, std::set<Node*, ReverseComparator>& open, std::set<Node*>& closed);
+	
+	/// <summary>
+	/// Find the correct route nodes to use for pathfinding through the given rooms
+	/// </summary>
+	/// <param name="mapRoute"></param>
+	/// <returns></returns>
 	Node* FindRouteNode(std::stack<RoomStruct*>& mapRoute);
 };
 

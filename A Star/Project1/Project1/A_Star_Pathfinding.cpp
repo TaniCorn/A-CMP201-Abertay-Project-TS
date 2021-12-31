@@ -29,6 +29,12 @@ void Base_A_Star_Pathfinding::SetUpStartAndEndNodes(Vector2<int> startPos, Vecto
 	target = endNode;
 }
 
+/// <summary>
+/// Finds and returns the node in the room given, assuming the coordinates match. Will shift as necessary for any position not comforming to the node size
+/// </summary>
+/// <param name="pos"></param>
+/// <param name="rm"></param>
+/// <returns></returns>
 Node* Base_A_Star_Pathfinding::FindNodeInRoom(Vector2<int> pos, Room* rm)
 {
 	//Trying to get the reference of the room position back to 0
@@ -57,6 +63,7 @@ Node* Base_A_Star_Pathfinding::FindNodeInRoom(Vector2<int> pos, Room* rm)
 
 void Base_A_Star_Pathfinding::PrintRoute()
 {
+	//Sets the route to 2 to easily identify
 	Node* cn; cn = target;
 	while (cn->GetParent() != nullptr)
 	{
@@ -64,6 +71,7 @@ void Base_A_Star_Pathfinding::PrintRoute()
 		cn = cn->GetParent();
 	}
 
+	//Print room map 
 	bool newLine = false;
 	for (auto rm : rooms)
 	{
@@ -86,6 +94,8 @@ void Base_A_Star_Pathfinding::PrintRoute()
 	}
 
 }
+
+///////Acknowledgment: The IsNodeInRoom functions are based on the CMP105 project - collision detection
 
 bool Base_A_Star_Pathfinding::IsNodeInRoom(const RoomStruct& nm, const Node& target)
 {
@@ -117,8 +127,9 @@ void A_Star_Pathfinding_Undefined::AStarAlgorithm()
 	toSearch.push(root);
 
 	iterations = 0;
+
 	//Considering it is an undefined map, there is an unlikely chance that we could ever have a size of zero
-	while (toSearch.size() != 0 && iterations != 10000)
+	while (toSearch.size() != 0 && iterations != 1000)//1000 limit for ideal use
 	{
 
 		//Find lowest fCost Open Node
@@ -131,7 +142,7 @@ void A_Star_Pathfinding_Undefined::AStarAlgorithm()
 			target->SetParent(current);
 			return;
 		}
-		//Restructure the node collections
+
 		toSearch.pop();
 
 		//Neighbours
@@ -164,6 +175,7 @@ void A_Star_Pathfinding_Undefined::CheckNeighbours(Node* current)
 		{
 			continue;
 		}
+		//If we move to a different room we need the new obstacle map, switch current room
 		if (!IsNodeInRoom(*currentRoom,neighbour->position))
 		{
 			for (auto rm : rooms)
@@ -180,6 +192,7 @@ void A_Star_Pathfinding_Undefined::CheckNeighbours(Node* current)
 		{
 			continue;
 		}
+
 		int newGCost = current->GetGCost() + 1;
 		int newHCost = Node::DistanceBetweenM(*neighbour, *target);
 		neighbour->SetGCost(newGCost); neighbour->SetHCost(newHCost); neighbour->SetFCost();
@@ -187,16 +200,7 @@ void A_Star_Pathfinding_Undefined::CheckNeighbours(Node* current)
 
 	}
 }
-////if neighbour exists in closed, continue ///Shouldn't happen unless the path loops back on itself
-//if (searched.find(neighbour) != searched.end())
-//{
-//	continue;
-//}
-//if (open.find(neighbour) == open.end())
-//{
-//	open.insert(neighbour);
-//	priority.push(neighbour);
-//}
+
 #pragma endregion
 
 
@@ -205,17 +209,14 @@ void A_Star_Pathfinding_Undefined::CheckNeighbours(Node* current)
 void A_Star_Pathfinding_Defined::AStarAlgorithm()
 {
 	openSet.insert(root);
-	std::vector<Vector2<int>> pos;
 
 	iterations = 0;
 
-	while (openSet.size() != 0 && iterations <= 100000)
+	while (openSet.size() != 0 && iterations <= 10000)
 	{
 
 		//Find lowest fCost Open Node
 		Node* current = *openSet.begin();
-		Vector2<int> cPos = current->position;
-		pos.push_back(current->position);
 
 		//If we found end, stop pathfinding
 		int o = current->DistanceFromM(target->position);//debugging
@@ -230,12 +231,10 @@ void A_Star_Pathfinding_Defined::AStarAlgorithm()
 		closedSet.insert(current);
 
 		//Neighbours
-		//current->GenerateNeighbours(nodeSize);
 		CheckNeighbours(current);
 
 		iterations++;
 	}
-	std::cout << iterations;
 }
 
 void A_Star_Pathfinding_Defined::CheckNeighbours(Node* current)
@@ -289,6 +288,9 @@ void A_Star_Pathfinding_Defined_Segmented::FindCurrentRoom(const Vector2<int> ro
 	}
 }
 
+/// <summary>
+/// Specific to segmented variant
+/// </summary>
 void A_Star_Pathfinding_Defined_Segmented::AStarAlgorithm()
 {
 	Node* current = root;
@@ -315,7 +317,6 @@ void A_Star_Pathfinding_Defined_Segmented::AStarAlgorithm()
 			}
 		}
 	}
-	std::cout << "\n\n\n\n\n\n\n\n HAHAH";
 	//Search normally towards the target node
 	if (DefaultAStar(*current, *target))
 	{
@@ -409,7 +410,12 @@ Node* A_Star_Pathfinding_Defined_Segmented::FindRouteNode(std::stack<RoomStruct*
 	}
 	return nullptr;
 }
-
+/// <summary>
+/// Designed to be as modular in use as possible
+/// </summary>
+/// <param name="startNode"></param>
+/// <param name="endNode"></param>
+/// <returns></returns>
 bool A_Star_Pathfinding_Defined_Segmented::DefaultAStar(Node& startNode, Node& endNode)
 {
 	std::set<Node*, ReverseComparator> open;
@@ -453,6 +459,7 @@ void A_Star_Pathfinding_Defined_Segmented::CheckNeighbours(Node* current, Node& 
 		{
 			continue;
 		}
+		//To stop a infinite parent loop from previous route node(as that isn't added into the next closed set
 		if (neighbour->parentNode != nullptr)
 		{
 			continue;

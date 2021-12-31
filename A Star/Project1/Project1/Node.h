@@ -2,8 +2,8 @@
 //////////Node Map files
 //////////Written by Tanapat Somrid 
 /////////Starting 08/12/2021
-//////// Most Recent Update 29/12/2021
-//////// Most Recent change: Added a direction enum for future ease, when initialising nodes - parent gets set to nullptr
+//////// Most Recent Update 30/12/2021
+//////// Most Recent change: Cleanup
 
 
 #pragma once
@@ -22,6 +22,9 @@ enum NodeType
 	Routes = 2,
 };
 
+/// <summary>
+/// A bit late to use now, it would take a lot of re-writing tiny bits of code that don't ultimatley matter
+/// </summary>
 enum Direction {
 	NORTH = 0,
 	EAST = 1,
@@ -62,7 +65,7 @@ public:
 		parentNode = nullptr;
 	}
 
-	//Copy Constructors
+	/////////Copy Constructors
 
 	/// <summary>
 	/// Copy Constructor for assignment
@@ -142,21 +145,6 @@ public:
 #pragma endregion
 
 public:
-#pragma region FUNCTIONS
-
-	void Search8Neighbours() {
-		for (int x = -1; x < x <= 1; x++)
-		{
-			for (int y = -1; y < y <= 1; y++)
-			{
-
-			}
-		}
-	};
-
-#pragma endregion
-
-public:
 #pragma region GETTERS/SETTERS
 	void SetHCost(int h) {
 		hCost = h * inclination;
@@ -189,20 +177,24 @@ public:
 	}
 #pragma endregion
 
-public:
-	/// <summary>
-/// Generate all neighbours
-/// </summary>
-	void GenerateNeighbours(int nodeSize) {
-		Generate4Neighbours(nodeSize);
-	};
-	void CalculateNodeType(const std::vector<Vector2<int>>& obsMap, int nodeSize);
+#pragma region UNDEFINED_VARIANT
+	public:
+		/// <summary>
+	/// Generate all neighbours
+	/// </summary>
+		void GenerateNeighbours(int nodeSize) {
+			Generate4Neighbours(nodeSize);
+		};
+		void CalculateNodeType(const std::vector<Vector2<int>>& obsMap, int nodeSize);
 
 private:
 	/// <summary>
 /// Generates neighbours in 4 direcions (NESW)
 /// </summary>
 	void Generate4Neighbours(int nodeSize);
+#pragma endregion
+
+
 
 };
 

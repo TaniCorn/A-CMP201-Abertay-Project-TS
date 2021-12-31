@@ -1,5 +1,10 @@
 #include "PathfindingMap.h"
 
+/// <summary>
+/// Find opposite direction to direction n
+/// </summary>
+/// <param name="n"></param>
+/// <returns></returns>
 int OppositeDirection(Direction n) {
 	switch (n)
 	{
@@ -23,6 +28,11 @@ int OppositeDirection(Direction n) {
 		break;
 	}
 }
+
+/// <summary>
+/// I hate this entire piece of code
+/// </summary>
+/// <param name="nm"></param>
 void Room::LinkNeighbours(Room& nm)
 {
 	int xBound = xSize - 1; int yBound = ySize - 1;
@@ -173,6 +183,7 @@ void Room::LinkNeighbours(Room& nm)
 #pragma endregion
 }
 
+
 void Room::LinkRouteNodes(Node& node1, Node& node2)
 {
 	//Just calculates the direction
@@ -189,8 +200,9 @@ void Room::LinkRouteNodes(Node& node1, Node& node2)
 			toReplace = i;
 		}
 	}
-	node1.neighbours[toReplace] = &node2;
 
+
+	node1.neighbours[toReplace] = &node2;
 }
 
 void Room::LinkRouteNodes(Node& node1, Node& node2, int neighbourNode1)
