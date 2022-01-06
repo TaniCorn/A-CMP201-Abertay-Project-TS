@@ -2,8 +2,8 @@
 //////////Node Map files
 //////////Written by Tanapat Somrid 
 /////////Starting 08/12/2021
-//////// Most Recent Update 30/12/2021
-//////// Most Recent change: Cleanup
+//////// Most Recent Update 06/01/2022
+//////// Most Recent change: Added empty destructor
 
 
 #pragma once
@@ -65,6 +65,9 @@ public:
 		parentNode = nullptr;
 	}
 
+	~Node() {
+
+	}
 	/////////Copy Constructors
 
 	/// <summary>

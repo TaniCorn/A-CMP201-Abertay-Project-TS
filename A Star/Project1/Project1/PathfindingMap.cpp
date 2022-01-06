@@ -41,6 +41,13 @@ void Room::LinkNeighbours(Room& nm)
 	{
 		for (int x = 1; x < xBound; x++)
 		{
+			//Node* a = &nodes[x][y];//For debugging
+			//Node* b = &nodes[1][1];//For debugging
+			//Node* c = &nodes[2][1];//For debugging
+			//Node* d = &nodes[1][2];//For debugging
+			//Node* e = &nodes[0][0];//For debugging
+			//Node* f = &nodes[2][2];//For debugging
+			//Node* g = &nodes[0][2];//For debugging
 			nodes[x][y].neighbours[0] = &nodes[x][y - 1];
 			nodes[x][y].neighbours[1] = &nodes[x + 1][y];
 			nodes[x][y].neighbours[2] = &nodes[x][y + 1];
@@ -204,6 +211,88 @@ void Room::LinkRouteNodes(Node& node1, Node& node2)
 
 	node1.neighbours[toReplace] = &node2;
 }
+void Room::DualLinkRouteNodes(Node& node1, Node& node2)
+{
+	//Just calculates the direction
+	//Vector2<int> direction = node1.position - node2.position;
+	//direction.Normalise();
+	//float lowest = 10;
+	//int toReplace;
+	//for (int i = 0; i < 8; i++)
+	//{
+	//	if (node1.neighbours[i] == NULL || node1.neighbours[i] == nullptr)
+	//	{
+	//		toReplace = i;
+	//		break;
+	//	}
+	//	Vector2<float> dir = (node1.neighbours[i]->position - node1.position).Normalize() - direction;
+	//	float directionWeight = dir.Magnitude();
+	//	if (directionWeight < lowest)
+	//	{
+	//		lowest = directionWeight;
+	//		toReplace = i;
+	//	}
+	//}
+
+	//Vector2<int> direction2 = node2.position - node1.position;
+	//direction2.Normalise();
+	//float lowest2 = 10;
+	//int toReplace2;
+	//for (int i = 0; i < 8; i++)
+	//{
+	//	if (node2.neighbours[i] == NULL || node2.neighbours[i] == nullptr)
+	//	{
+	//		toReplace2 = i;
+	//		break;
+	//	}
+	//	Vector2<float> dir = (node2.neighbours[i]->position - node2.position).Normalize() - direction;
+	//	float directionWeight = dir.Magnitude();
+	//	if (directionWeight < lowest2)
+	//	{
+	//		lowest2 = directionWeight;
+	//		toReplace2 = i;
+	//	}
+	//}
+	Vector2<int> direction = node2.position - node1.position;
+	direction.Normalise();
+	int toReplace;
+
+	if (direction == Vector2<int>(1, 0))
+	{
+		toReplace = 1;
+	}
+	else if (direction == Vector2<int>(0, 1)) {
+		toReplace = 2;
+	}
+	else if (direction == Vector2<int>(-1, 0))
+	{
+		toReplace = 3;
+	}
+	else if (direction == Vector2<int>(0, -1)) {
+		toReplace = 0;
+	}
+	else if (direction == Vector2<int>(1, 1))
+	{
+		toReplace = 6;
+	}
+	else if (direction == Vector2<int>(1, -1)) {
+		toReplace = 5;
+	}
+	else if (direction == Vector2<int>(-1, 1)) {
+		toReplace = 7;
+	}
+	else if (direction == Vector2<int>(-1, -1))
+	{
+		toReplace = 4;
+	}
+	else 
+	{
+		toReplace = 1;
+	}
+	node1.neighbours[toReplace] = &node2;
+	node2.neighbours[OppositeDirection(Direction(toReplace))] = &node1;
+
+}
 
 void Room::LinkRouteNodes(Node& node1, Node& node2, int neighbourNode1)
 {
@@ -215,4 +304,29 @@ void Room::DualLinkRouteNodes(Node& node1, Node& node2, int neighbourNode1)
 	node1.neighbours[neighbourNode1] = &node2;
 	node2.neighbours[OppositeDirection(Direction(neighbourNode1))] = &node1;
 	
+}
+
+void Room::AutoDualLinkRouteNodes()
+{
+	//std::set<RoomStruct*>::iterator room = neighbouringRooms.begin();
+	int safe = 2;
+	if (nodeSize > 100)
+	{
+		safe = 20;
+	}
+	for (auto room : neighbouringRooms)
+	{
+		std::vector<Node*> neighbourRouteNodes = room->GetRouteNodes();
+		for (int i = 0; i < routeNodes.size(); i++)
+		{
+			for (int j = 0; j < neighbourRouteNodes.size(); j++)
+			{
+				if (routeNodes[i]->DistanceFromM(neighbourRouteNodes[j]->position) <= (nodeSize * safe))
+				{
+					DualLinkRouteNodes(*routeNodes[i], *neighbourRouteNodes[j]);
+				}
+			}
+
+		}
+	}
 }

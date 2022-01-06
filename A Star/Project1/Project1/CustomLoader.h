@@ -154,7 +154,8 @@ void CompleteMapRead(Room& nm, std::string fileName) {
 
         //Just some array index manipulation going on here
         int p = i - 3;
-        int x = (p / xSize); int y = p % ySize;
+        int y = p % ySize;
+        int x = (p / xSize); 
 
         //Set position and nodetype, route nodes, and obstacle locations
         f[x][y].position = coord;
@@ -208,7 +209,7 @@ void CompleteMapRead(Room& nm, std::string fileName) {
 /// <param name="direction">displacement amount, (1,0) means one room to the right</param>
 void DisplaceNodeMap(Room& nm, Vector2<int> direction) {
     std::vector<Vector2<int>> newObstacle;
-    Vector2<int> displacementAmount = Vector2<int>(direction.x * (nm.GetHighestCoord().x + nm.GetNodeSize()), direction.y * (nm.GetHighestCoord().y + nm.GetNodeSize()));
+    Vector2<int> displacementAmount = Vector2<int>(direction.x * (nm.GetHighestCoord().x + nm.GetNodeSize()), direction.y * (nm.GetHighestCoord().y + nm.GetNodeSize())) + (direction * nm.GetNodeSize());
     for (int x = 0; x < nm.GetXSize(); x++)
     {
         for (int y = 0; y < nm.GetYSize(); y++)

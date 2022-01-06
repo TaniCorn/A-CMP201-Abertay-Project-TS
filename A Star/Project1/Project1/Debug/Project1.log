@@ -1,29 +1,53 @@
 ﻿  Source.cpp
-C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Node.h(148,1): warning C4804: '<=': unsafe use of type 'bool' in operation
-C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Node.h(150,1): warning C4804: '<=': unsafe use of type 'bool' in operation
-C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Node.h(162,13): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Node.h(165,10): warning C4244: 'return': conversion from 'const float' to 'int', possible loss of data
-C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Node.h(168,11): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Node.h(171,10): warning C4244: 'return': conversion from 'const float' to 'int', possible loss of data
-C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Node.h(179,11): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Node.h(182,10): warning C4244: 'return': conversion from 'const float' to 'int', possible loss of data
-C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\CustomLoader.h(33,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\CustomLoader.h(117,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\CustomLoader.h(193,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\VectorPositions.h(80,10): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\VectorPositions.h(78): message : while compiling class template member function 'int Vector2<int>::DistanceBetween(const Vector2<int> &,const Vector2<int> &)'
-C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Node.h(99): message : see reference to function template instantiation 'int Vector2<int>::DistanceBetween(const Vector2<int> &,const Vector2<int> &)' being compiled
-C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Node.h(134): message : see reference to class template instantiation 'Vector2<int>' being compiled
-C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\VectorPositions.h(68,10): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\VectorPositions.h(66): message : while compiling class template member function 'int Vector2<int>::DistanceFrom(const Vector2<int> &)'
-C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Node.h(89): message : see reference to function template instantiation 'int Vector2<int>::DistanceFrom(const Vector2<int> &)' being compiled
-C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\VectorPositions.h(61,42): warning C4244: 'return': conversion from 'double' to 'int', possible loss of data
-C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\VectorPositions.h(61): message : while compiling class template member function 'int Vector2<int>::DistanceFrom(T,T)'
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Node.h(153,13): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Node.h(156,10): warning C4244: 'return': conversion from 'const float' to 'int', possible loss of data
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Node.h(159,11): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Node.h(162,10): warning C4244: 'return': conversion from 'const float' to 'int', possible loss of data
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Node.h(170,11): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Node.h(173,10): warning C4244: 'return': conversion from 'const float' to 'int', possible loss of data
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\CustomLoader.h(142,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\CustomLoader.h(229,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Source.cpp(362,30): warning C4244: 'argument': conversion from '_Rep' to 'const _Ty', possible loss of data
+          with
+          [
+              _Rep=__int64
+          ]
+          and
+          [
+              _Ty=float
+          ]
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Source.cpp(363,30): warning C4244: 'argument': conversion from '_Rep' to 'const _Ty', possible loss of data
+          with
+          [
+              _Rep=__int64
+          ]
+          and
+          [
+              _Ty=float
+          ]
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Source.cpp(364,30): warning C4244: 'argument': conversion from '_Rep' to 'const _Ty', possible loss of data
+          with
+          [
+              _Rep=__int64
+          ]
+          and
+          [
+              _Ty=float
+          ]
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\VectorPositions.h(83,10): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\VectorPositions.h(81): message : while compiling class template member function 'int Vector2<int>::DistanceBetween(const Vector2<int> &,const Vector2<int> &)'
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Node.h(105): message : see reference to function template instantiation 'int Vector2<int>::DistanceBetween(const Vector2<int> &,const Vector2<int> &)' being compiled
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Node.h(140): message : see reference to class template instantiation 'Vector2<int>' being compiled
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\VectorPositions.h(71,10): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\VectorPositions.h(69): message : while compiling class template member function 'int Vector2<int>::DistanceFrom(const Vector2<int> &)'
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Node.h(95): message : see reference to function template instantiation 'int Vector2<int>::DistanceFrom(const Vector2<int> &)' being compiled
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\VectorPositions.h(64,42): warning C4244: 'return': conversion from 'double' to 'int', possible loss of data
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\VectorPositions.h(64): message : while compiling class template member function 'int Vector2<int>::DistanceFrom(T,T)'
           with
           [
               T=int
           ]
-C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Node.h(83): message : see reference to function template instantiation 'int Vector2<int>::DistanceFrom(T,T)' being compiled
+C:\Users\Tanap\Documents\A. Strictly Abertay\2021(Y2)\CMP201\CMP201-Project\A Star\Project1\Project1\Node.h(89): message : see reference to function template instantiation 'int Vector2<int>::DistanceFrom(T,T)' being compiled
           with
           [
               T=int

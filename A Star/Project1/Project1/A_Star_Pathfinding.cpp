@@ -129,20 +129,20 @@ void A_Star_Pathfinding_Undefined::AStarAlgorithm()
 	iterations = 0;
 
 	//Considering it is an undefined map, there is an unlikely chance that we could ever have a size of zero
-	while (toSearch.size() != 0 && iterations != 1000)//1000 limit for ideal use
+	while (toSearch.size() != 0 && iterations != 10000)//1000 limit for ideal use
 	{
 
 		//Find lowest fCost Open Node
 		Node* current = toSearch.top();
 
 		//If we found end, stop pathfinding
-		int o = current->DistanceFromM(target->position);//debugging
+		//int o = current->DistanceFromM(target->position);//debugging
 		if (current->DistanceFromM(target->position) < nodeSize)
 		{
 			target->SetParent(current);
 			return;
 		}
-
+		delete toSearch.top();
 		toSearch.pop();
 
 		//Neighbours
@@ -151,6 +151,7 @@ void A_Star_Pathfinding_Undefined::AStarAlgorithm()
 
 		iterations++;
 	}
+	std::cout << "Undef Nada";
 }
 
 void A_Star_Pathfinding_Undefined::SetUpStartAndEndNodes(Vector2<int> startPos, Vector2<int> endPos)
@@ -212,16 +213,20 @@ void A_Star_Pathfinding_Defined::AStarAlgorithm()
 
 	iterations = 0;
 
-	while (openSet.size() != 0 && iterations <= 10000)
+	while (openSet.size() != 0 && iterations <= 100000000)
 	{
 
 		//Find lowest fCost Open Node
 		Node* current = *openSet.begin();
 
 		//If we found end, stop pathfinding
-		int o = current->DistanceFromM(target->position);//debugging
+		//int o = current->DistanceFromM(target->position);//debugging
 		if (current->DistanceFromM(target->position) < nodeSize)
 		{
+			closedSet.clear();
+			openSet.clear();
+			target = current;
+			iterations = 0;
 			return;
 		}
 
@@ -229,12 +234,16 @@ void A_Star_Pathfinding_Defined::AStarAlgorithm()
 		//Restructure the node collections
 		openSet.erase(it);
 		closedSet.insert(current);
-
 		//Neighbours
 		CheckNeighbours(current);
 
 		iterations++;
 	}
+	closedSet.clear();
+	openSet.clear();
+	iterations = 0;
+	std::cout << "unable to Pathfind default";
+
 }
 
 void A_Star_Pathfinding_Defined::CheckNeighbours(Node* current)
@@ -323,6 +332,7 @@ void A_Star_Pathfinding_Defined_Segmented::AStarAlgorithm()
 		return;
 		
 	}
+	std::cout << "Seg Nada";
 	return;//Failed
 }
 
@@ -336,6 +346,7 @@ std::stack<RoomStruct*> A_Star_Pathfinding_Defined_Segmented::BruteForcePathfind
 	//Brute force searching of all rooms
 	while (open.size() != 0)
 	{
+		currentRoomToSearch = *open.begin();//We have search all neighbours of previous room, get next room
 		open.erase(open.begin());
 		closed.insert(currentRoomToSearch);
 		//Search all neighbouring rooms
@@ -361,7 +372,6 @@ std::stack<RoomStruct*> A_Star_Pathfinding_Defined_Segmented::BruteForcePathfind
 
 			open.insert(neighbour);
 		}
-		currentRoomToSearch = *open.begin();//We have search all neighbours of previous room, get next room
 	}
 	return mapRoute;
 
@@ -423,21 +433,22 @@ bool A_Star_Pathfinding_Defined_Segmented::DefaultAStar(Node& startNode, Node& e
 	open.insert(&startNode);
 
 	iterations = 0;
-	while (open.size() != 0 && iterations <= 1000)
+	while (open.size() != 0 && iterations <= 1000000)
 	{
 
 		//Find lowest fCost Open Node
 		Node* current = *open.begin();
-		std::cout << current->position;
+		//std::cout << current->position;
 		//If we found end, stop pathfinding
-		int o = current->DistanceFromM(endNode.position);//debugging
+		//int o = current->DistanceFromM(endNode.position);//debugging
 		if (current->DistanceFromM(endNode.position) < nodeSize)
 		{
 			return true;
 		}
+		std::set<Node*>::iterator it = open.begin();//For some reason, it won't erase some points, so we need to point to the first one to erase instead of erasing the specific node
 
 		//Restructure the node collections
-		open.erase(current);
+		open.erase(it);
 		closed.insert(current);
 
 		//Neighbours
@@ -448,6 +459,8 @@ bool A_Star_Pathfinding_Defined_Segmented::DefaultAStar(Node& startNode, Node& e
 	}
 	return false;
 }
+
+
 
 void A_Star_Pathfinding_Defined_Segmented::CheckNeighbours(Node* current, Node& targetNode, std::set<Node*, ReverseComparator>& open, std::set<Node*>& closed)
 {

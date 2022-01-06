@@ -2,8 +2,8 @@
 //////////A Star Pathfing files // PathfindingMap.h required
 //////////Written by Tanapat Somrid 
 /////////Starting 01/12/2021
-//////// Most Recent Update 30/12/2021
-//////// Most Recent change: Cleanup and commenting
+//////// Most Recent Update 06/01/2022
+//////// Most Recent change: Quick fixes - closedSet in default not clearing for next run
 //////// TODO: Get a lot of error checking and catch cases where the path cannot be found. Currently the algorithms mostly assume it's possible. Make undefined have more directions
 //////// TODO: Ideally, for actual use, the algorithm won't update continually only when(player has moved to a different room, player has moved position in same room);
 
@@ -94,7 +94,7 @@ protected:
 	/// Is Node in current room//TODO: Fix function or fix name
 	/// </summary>
 	/// <param name="rootPosition"></param>
-	virtual void FindCurrentRoom(const Vector2<int> rootPosition) { if (!Base_A_Star_Pathfinding::IsNodeInRoom(*currentRoom, rootPosition)) { return; } std::cout << "Room ok! \n"; };
+	virtual void FindCurrentRoom(const Vector2<int> rootPosition) { if (!Base_A_Star_Pathfinding::IsNodeInRoom(*currentRoom, rootPosition)) { return; } /*std::cout << "Room ok! \n";*/ };
 	/// <summary>
 	/// Translates the positions to the node format, and assigns each position their node.
 	/// </summary>

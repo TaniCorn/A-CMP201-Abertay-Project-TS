@@ -2,8 +2,8 @@
 //////////Vector 2 files
 //////////Written by Tanapat Somrid 
 /////////Starting 01/12/2021
-//////// Most Recent Update 29/12/2021
-//////// Most Recent change: The += -= operators have been fixed, added a normalise function, added a division by int operator overload
+//////// Most Recent Update 06/01/2022
+//////// Most Recent change: Changed Magnitude Function, added multiply function
 
 #pragma once
 #ifndef VECTOR2_H
@@ -42,17 +42,20 @@ public:
 	T x, y;
 
 	#pragma region FUNCTIONS
-	T Magnitude() const{
-		return (T)(sqrt(abs(x * x) + abs(y * y)));
+	//T Magnitude() const{
+	//	return (T)(sqrt(abs(x * x) + abs(y * y)));
+	//}
+	float Magnitude() const {
+		return (float)(sqrt(abs(x * x) + abs(y * y)));
 	}
-	static T Magnitude(const Vector2<T>& vector) {
-		return (T)(sqrt(abs(vector.x * vector.x) + abs(vector.y * vector.y)));
+	static float Magnitude(const Vector2<T>& vector) {
+		return (float)(sqrt(abs(vector.x * vector.x) + abs(vector.y * vector.y)));
 	}
 	void Normalise() {
-		*this = *this / this->Magnitude();
+		*this = *this / static_cast<int>(this->Magnitude());
 	}
-	Vector2<T> Normalize() {
-		return Vector2<T>(*this / this->Magnitude());
+	Vector2<float> Normalize() {
+		return Vector2<float>(static_cast<Vector2<float>>(*this) / this->Magnitude());
 	}
 	/// <summary>
 /// The EUCLIDEAN distance from this vector and the given coordinates (x and y)
@@ -108,7 +111,12 @@ template <typename T> Vector2<T> operator +(const Vector2<T>& lhs, const Vector2
 template <typename T> Vector2<T> operator -(const Vector2<T>& lhs, const Vector2<T>& rhs) {
 	return Vector2<T>((lhs.x - rhs.x), (lhs.y - rhs.y));
 }
-
+template <typename T> Vector2<float> operator -(const Vector2<T>& lhs, const Vector2<float>& rhs) {
+	return Vector2<float>((lhs.x - rhs.x), (lhs.y - rhs.y));
+}
+template <typename T, typename U> Vector2<float> operator -(const Vector2<T>& lhs, const Vector2<U>& rhs) {
+	return Vector2<float>((lhs.x - rhs.x), (lhs.y - rhs.y));
+}
 /// <summary>
 /// This works
 /// </summary>
@@ -118,6 +126,9 @@ template <typename T> Vector2<T> operator -(const Vector2<T>& lhs, const Vector2
 /// <returns></returns>
 template <typename T> Vector2<T> operator /(const Vector2<T>& lhs, const T& rhs) {
 	return Vector2<T>((lhs.x / rhs), (lhs.y / rhs));
+}
+template <typename T> Vector2<T> operator *(const Vector2<T>& lhs, const T& rhs) {
+	return Vector2<T>((lhs.x * rhs), (lhs.y * rhs));
 }
 /// <summary>
 /// This works

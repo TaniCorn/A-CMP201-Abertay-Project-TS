@@ -3,8 +3,8 @@
 //////////Pathfinding Map files // PathfindingMap.h required
 //////////Written by Tanapat Somrid 
 /////////Starting 18/12/2021
-//////// Most Recent Update 30/12/2021
-//////// Most Recent change: Cleanup and commenting
+//////// Most Recent Update 06/01/2022
+//////// Most Recent change: Quick Fix of some linking issues, neighbour and route issues
 #pragma once
 #ifndef PATHFINDINGMAP_H
 #define PATHFINDINGMAP_H
@@ -23,11 +23,10 @@ public:
 		parent = nullptr;
 	}
 	~RoomStruct() {
-		for (int i = 0; i < xSize; ++i)
+		for (int i = 0; i < xSize - 1; ++i)
 		{
 			delete[] nodes[i];
 		}
-		delete[] nodes;
 
 	}
 protected:
@@ -90,6 +89,9 @@ public:
 	/// <param name="node2">is the nieghbour of n1, the one being linked</param>
 	/// <param name="neighbourNode1"></param>
 	void DualLinkRouteNodes(Node& node1, Node& node2, int neighbourNode1);
+
+	void AutoDualLinkRouteNodes();
+	void DualLinkRouteNodes(Node& node1, Node& node2);
 };
 class Map {
 public:
